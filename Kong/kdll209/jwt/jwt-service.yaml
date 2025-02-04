@@ -1,0 +1,9 @@
+plugins:
+- name: jwt
+  service: Transactions_API_of_BanKonG
+consumers:
+- username: Jane
+  jwt_secrets:
+  - algorithm: HS256
+    key: jwt-key
+    secret: jwtkey

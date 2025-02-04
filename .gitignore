@@ -1,0 +1,13 @@
+graviteeam\logs
+Gravitee\apim-gateway\logs
+Gravitee\elasticsearch\data
+Gravitee\apim-management-api\logs
+Gravitee\apim-management-ui\logs
+Gravitee\apim-portal-ui\logs
+logs\*
+*.log
+WiredTiger.*
+wiredTiger
+*.lock
+.vscode
+*._PASSWORD

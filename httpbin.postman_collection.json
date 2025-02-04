@@ -1,0 +1,254 @@
+{
+	"info": {
+		"_postman_id": "62a4e8e7-d048-4dfe-a8d6-924511938b9d",
+		"name": "Gravitee collection",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "29934357"
+	},
+	"item": [
+		{
+			"name": "Gravitee apim",
+			"item": [
+				{
+					"name": "petstore gravitee apim",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbGllbnRfaWQiOiJ0aGlzaXN3YWh0SXdhbnQiLCJleHAiOjE1MTYyMzkwMzk1NX0.smxZNtB6lXMG2hZeyfGvtOAuxY4-PZqNEh4HRy3LkPA",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8082/v2/pet/findByStatus?status=pending",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8082",
+							"path": [
+								"v2",
+								"pet",
+								"findByStatus"
+							],
+							"query": [
+								{
+									"key": "status",
+									"value": "pending"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "httpbin_anything",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiZXhwIjoxNTE2MjM5MDM5NTUsIkNVSUQiOiJhYmMtYWJjLWFiYy1hYmMifQ.Ytcpc9q56bDrxlN_NQpSEusLySdq0l9D0CCqyj42TLg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:9090/httpbin/anything",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9090",
+							"path": [
+								"httpbin",
+								"anything"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "httpbin_headers",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJraWQiOiJkZWZhdWx0IiwidHlwIjoiSldUIiwiYWxnIjoiUlMyNTYifQ.eyJzdWIiOiJjbGllbnRJZCIsImF1ZCI6ImNsaWVudElkIiwiZG9tYWluIjoiZTgwMzE5YmYtMDg4NS00MjQ1LTgzMTktYmYwODg1MDI0NWI5IiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo1Njc4L2FtL3NlY2RvbWFpbi9vaWRjIiwiZXhwIjoxNzMzMzM3NzMzLCJpYXQiOjE3MzMzMzA1MzMsImp0aSI6InE1QUFfejFGNXl5eVFsYlBJYm9QS3VsRXBTRUNwMWNFQXhqWE5acjVocDAiLCJjbGllbnRfaWQiOiJjbGllbnRJZCJ9.IyPpzUCPNQjILDdmUtp1hBXuI5HIKI04ik3N62chwmEuLAuuBwSb-AMDAB04a15AOksRNHlLzYoBFjkgXBEIOrqcBnLCqal45n_Ee8bJhTu-Uo9vT7pi-PrS3GDUazJR0SuOap0_uKz7OdGJI4_fI7nCJdohIpZUzJ6c2qm0o2xrkbaa-tiFN2l44LsysUenGoXRwxTPqbMcRMrDFv4TtTcJvklRQnmbjgcxKGSuYiHuBYJ-dLMjd_kGlxFfLu_th0HNBZvube04xsKqxGx4FaH63oC9bJwZ8N5VjSEuV5prQWLMpXMKkRboBsJ4AdzOPQjboHb4rYF3ma0bS0zhSw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8082/httpbin/headers",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8082",
+							"path": [
+								"httpbin",
+								"headers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "httpbin_uuid",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:9090/httpbin/uuid",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9090",
+							"path": [
+								"httpbin",
+								"uuid"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "orders",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJraWQiOiJkZWZhdWx0IiwidHlwIjoiSldUIiwiYWxnIjoiUlMyNTYifQ.eyJzdWIiOiJhYWQ0OTcxNi01ZTA5LTRlMTUtODA5MC1kOGU5YjBjZTYzNGYiLCJhdWQiOiJhYWQ0OTcxNi01ZTA5LTRlMTUtODA5MC1kOGU5YjBjZTYzNGYiLCJjbGllbnRJZCI6IjQ1MjE1NTU1IiwiZG9tYWluIjoiZTgwMzE5YmYtMDg4NS00MjQ1LTgzMTktYmYwODg1MDI0NWI5IiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo1Njc4L2FtL3NlY2RvbWFpbi9vaWRjIiwiZXhwIjoxNzMzODQ1NzE1LCJpYXQiOjE3MzM4Mzg1MTUsImp0aSI6IjRBQnJXYjl5al9KQ0ROUmpOSnZ0QW5TQXVQUEY1NFE5OVlXRDJNc2RjOU0ifQ.IT757IzpbF_HqRUdb4ciouJj9CRWpqpnPFel0nlQ_l5YcZi1UjS7Qjh2eEbjufkH8w-zSR88leGaUgNMDrkZyxM2ifqujJlQ-_L9lZgxucNNIJPJJljFEZ3Py0aKR0cgz7HBqcSc-hlMVsE1D8HA_3w9EOJh3eUbUdmvQ8OdEojIotmxzO-xwdT6nK-sMFN12ItziHNPIusC1jsf4Ds_gXipJQ0IlM1oJIDhotr4AZfGv8PoRZlaZsKoA9kZBXwWU8PHMP__1CaPbsjayYyoF9mkU2dujvGoTWD-YtAY6sM5y3nR0xt1jkrJE8feN70FwHmbkqsjKrq9zAVmhP17XA",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:9090/v1/order/3S35571M1L381K5O0P316L0M1R2E6H19",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9090",
+							"path": [
+								"v1",
+								"order",
+								"3S35571M1L381K5O0P316L0M1R2E6H19"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "apiOauthweb",
+					"request": {
+						"auth": {
+							"type": "oauth2",
+							"oauth2": [
+								{
+									"key": "password",
+									"value": "HechmiP@ris2023",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "mbh-arboIT",
+									"type": "string"
+								},
+								{
+									"key": "clientSecret",
+									"value": "05d2a290-172e-4768-ba46-6a0f4e9ba4f4",
+									"type": "string"
+								},
+								{
+									"key": "clientId",
+									"value": "6d745312-4149-438f-8e59-5e71606312bd",
+									"type": "string"
+								},
+								{
+									"key": "accessTokenUrl",
+									"value": "http://localhost:5678/am/secdomain/oauth/token",
+									"type": "string"
+								},
+								{
+									"key": "grant_type",
+									"value": "password_credentials",
+									"type": "string"
+								},
+								{
+									"key": "addTokenTo",
+									"value": "header",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:9090/apiOauthweb",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9090",
+							"path": [
+								"apiOauthweb"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "api hook api connect ibm",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "https://api-manager.eu-central-a.apiconnect.automation.ibm.com/mfe_atm/api/rest/v1/92fb12ff-65e7-450c-8090-1cb652722dcf/tests/run",
+					"protocol": "https",
+					"host": [
+						"api-manager",
+						"eu-central-a",
+						"apiconnect",
+						"automation",
+						"ibm",
+						"com"
+					],
+					"path": [
+						"mfe_atm",
+						"api",
+						"rest",
+						"v1",
+						"92fb12ff-65e7-450c-8090-1cb652722dcf",
+						"tests",
+						"run"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

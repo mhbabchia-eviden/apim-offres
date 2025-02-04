@@ -1,0 +1,177 @@
+_format_version: "3.0"
+consumers:
+- custom_id: e66dd0ef-4a13-4162-96ae-af3aa1dc496e
+  username: mhbabchia1
+services:
+- connect_timeout: 60000
+  enabled: true
+  host: httpbin.docker.local
+  name: Httpbin_API_SVC
+  path: /
+  port: 80
+  protocol: http
+  read_timeout: 60000
+  retries: 5
+  routes:
+  - https_redirect_status_code: 426
+    methods:
+    - GET
+    name: Get_anything
+    path_handling: v0
+    paths:
+    - /anything
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+  - https_redirect_status_code: 426
+    methods:
+    - GET
+    - PUT
+    - POST
+    - PATCH
+    name: echo_status
+    path_handling: v0
+    paths:
+    - /status
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+  write_timeout: 60000
+- connect_timeout: 60000
+  enabled: true
+  host: mockbin.bankong
+  name: Mockbin_API_of_BanKonG
+  path: /request
+  port: 8080
+  protocol: http
+  read_timeout: 60000
+  retries: 5
+  routes:
+  - https_redirect_status_code: 426
+    name: echo-route
+    path_handling: v0
+    paths:
+    - /echo-request
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - bankong-api-tag
+    - marketing-tag
+  tags:
+  - bankong-api-tag
+  - marketing-tag
+  write_timeout: 60000
+- connect_timeout: 60000
+  enabled: true
+  host: backend-transactions.bankong
+  name: Transactions_API_of_BanKonG
+  path: /api/v1/
+  port: 3000
+  protocol: http
+  read_timeout: 60000
+  retries: 5
+  routes:
+  - https_redirect_status_code: 426
+    methods:
+    - DELETE
+    name: Transactions_API_of_BanKonG-cancelTransaction
+    path_handling: v0
+    paths:
+    - ~/transactions/(?<id>[^/]+)$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - OAS3_import
+  - https_redirect_status_code: 426
+    methods:
+    - PATCH
+    name: Transactions_API_of_BanKonG-changeTransaction
+    path_handling: v0
+    paths:
+    - ~/transactions/(?<id>[^/]+)$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - OAS3_import
+  - https_redirect_status_code: 426
+    methods:
+    - GET
+    name: Transactions_API_of_BanKonG-getTransaction
+    path_handling: v0
+    paths:
+    - ~/transactions/(?<id>[^/]+)$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - OAS3_import
+  - https_redirect_status_code: 426
+    methods:
+    - POST
+    name: Transactions_API_of_BanKonG-initiate_a_transaction
+    path_handling: v0
+    paths:
+    - ~/transactions$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - OAS3_import
+  - https_redirect_status_code: 426
+    methods:
+    - GET
+    name: Transactions_API_of_BanKonG-listTranactions
+    path_handling: v0
+    paths:
+    - ~/transactions$
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - OAS3_import
+  tags:
+  - OAS3_import
+  write_timeout: 60000

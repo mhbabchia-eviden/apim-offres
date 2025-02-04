@@ -1,0 +1,21 @@
+name: Validate API
+on: 
+  push:
+    branches: 
+      - features/testcicd
+
+jobs:
+  apic-deploy-test:
+    runs-on: ubuntu-latest
+    name: API Validation
+    steps:
+    - uses: actions/checkout@v2
+    - uses: ibm-apiconnect/actions@main
+      with:
+        manager-host: api-manager.us-east-a.apiconnect.automation.ibm.com
+        api-host: platform-api.us-east-a.apiconnect.automation.ibm.com
+        validate_only: 'true'
+        provider-org: 'demo'
+        catalog: 'sandbox'
+        product-file: 'product.yaml'
+

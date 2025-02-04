@@ -1,0 +1,1205 @@
+{
+  "api" : {
+    "definitionVersion" : "V4",
+    "type" : "PROXY",
+    "listeners" : [ {
+      "type" : "HTTP",
+      "paths" : [ {
+        "path" : "/httpbin/",
+        "overrideAccess" : false
+      } ],
+      "entrypoints" : [ {
+        "type" : "http-proxy",
+        "qos" : "AUTO"
+      } ]
+    } ],
+    "endpointGroups" : [ {
+      "name" : "default-group",
+      "type" : "http-proxy",
+      "loadBalancer" : {
+        "type" : "ROUND_ROBIN"
+      },
+      "sharedConfiguration" : {
+        "$schema" : "http://json-schema.org/draft-07/schema#",
+        "type" : "object",
+        "definitions" : {
+          "sslKeyStoreKeyContent" : {
+            "format" : "text",
+            "type" : "string",
+            "title" : "Private key"
+          },
+          "sslKeyStoreContent" : {
+            "format" : "text",
+            "description" : "Binary content as Base64",
+            "type" : "string",
+            "title" : "Content"
+          },
+          "sslKeyStoreKeyPath" : {
+            "description" : "Path to private key file (.PEM)",
+            "type" : "string",
+            "title" : "Path to private key file"
+          },
+          "useCompression" : {
+            "default" : true,
+            "gioConfig" : {
+              "banner" : {
+                "text" : "The gateway can let the remote http server know that it supports compression. In case the remote http server returns a compressed response, the gateway will decompress it. Leave that option off if you don't want compression between the gateway and the remote server.",
+                "title" : "Enable compression (gzip, deflate)"
+              }
+            },
+            "title" : "Enable compression (gzip, deflate)",
+            "type" : "boolean"
+          },
+          "sslKeyStorePath" : {
+            "description" : "Path to the key store file",
+            "type" : "string",
+            "title" : "Path to key store"
+          },
+          "pipelining" : {
+            "default" : false,
+            "gioConfig" : {
+              "banner" : {
+                "text" : "When pipe-lining is enabled requests will be written to connections without waiting for previous responses to return",
+                "title" : "Enable HTTP pipelining"
+              }
+            },
+            "title" : "Enable HTTP pipelining",
+            "type" : "boolean"
+          },
+          "sslTrustStoreHostnameVerifier" : {
+            "default" : true,
+            "description" : "Use to enable host name verification",
+            "title" : "Verify Host",
+            "type" : "boolean"
+          },
+          "ssl" : {
+            "type" : "object",
+            "title" : "SSL Options",
+            "properties" : {
+              "keyStore" : {
+                "oneOf" : [ {
+                  "type" : "object",
+                  "title" : "None",
+                  "properties" : {
+                    "type" : {
+                      "const" : ""
+                    }
+                  }
+                }, {
+                  "type" : "object",
+                  "title" : "JKS with path",
+                  "properties" : {
+                    "path" : {
+                      "$ref" : "#/definitions/sslKeyStorePath"
+                    },
+                    "password" : {
+                      "$ref" : "#/definitions/sslKeyStorePassword"
+                    },
+                    "keyPassword" : {
+                      "$ref" : "#/definitions/sslKeyStoreKeyPassword"
+                    },
+                    "alias" : {
+                      "$ref" : "#/definitions/sslKeyStoreAlias"
+                    },
+                    "type" : {
+                      "const" : "JKS"
+                    }
+                  },
+                  "required" : [ "password", "path" ]
+                }, {
+                  "type" : "object",
+                  "title" : "JKS with content",
+                  "properties" : {
+                    "password" : {
+                      "$ref" : "#/definitions/sslKeyStorePassword"
+                    },
+                    "keyPassword" : {
+                      "$ref" : "#/definitions/sslKeyStoreKeyPassword"
+                    },
+                    "alias" : {
+                      "$ref" : "#/definitions/sslKeyStoreAlias"
+                    },
+                    "type" : {
+                      "const" : "JKS"
+                    },
+                    "content" : {
+                      "$ref" : "#/definitions/sslKeyStoreContent"
+                    }
+                  },
+                  "required" : [ "password", "content" ]
+                }, {
+                  "type" : "object",
+                  "title" : "PKCS#12 / PFX with path",
+                  "properties" : {
+                    "path" : {
+                      "$ref" : "#/definitions/sslKeyStorePath"
+                    },
+                    "password" : {
+                      "$ref" : "#/definitions/sslKeyStorePassword"
+                    },
+                    "keyPassword" : {
+                      "$ref" : "#/definitions/sslKeyStoreKeyPassword"
+                    },
+                    "alias" : {
+                      "$ref" : "#/definitions/sslKeyStoreAlias"
+                    },
+                    "type" : {
+                      "const" : "PKCS12"
+                    }
+                  },
+                  "required" : [ "password", "path" ]
+                }, {
+                  "type" : "object",
+                  "title" : "PKCS#12 / PFX with content",
+                  "properties" : {
+                    "password" : {
+                      "$ref" : "#/definitions/sslKeyStorePassword"
+                    },
+                    "keyPassword" : {
+                      "$ref" : "#/definitions/sslKeyStoreKeyPassword"
+                    },
+                    "alias" : {
+                      "$ref" : "#/definitions/sslKeyStoreAlias"
+                    },
+                    "type" : {
+                      "const" : "PKCS12"
+                    },
+                    "content" : {
+                      "$ref" : "#/definitions/sslKeyStoreContent"
+                    }
+                  },
+                  "required" : [ "password", "content" ]
+                }, {
+                  "type" : "object",
+                  "title" : "PEM with path",
+                  "properties" : {
+                    "certPath" : {
+                      "$ref" : "#/definitions/sslKeyStoreCertPath"
+                    },
+                    "keyPath" : {
+                      "$ref" : "#/definitions/sslKeyStoreKeyPath"
+                    },
+                    "type" : {
+                      "const" : "PEM"
+                    }
+                  },
+                  "required" : [ "certPath", "keyPath" ]
+                }, {
+                  "type" : "object",
+                  "title" : "PEM with content",
+                  "properties" : {
+                    "certContent" : {
+                      "$ref" : "#/definitions/sslKeyStoreCertContent"
+                    },
+                    "keyContent" : {
+                      "$ref" : "#/definitions/sslKeyStoreKeyContent"
+                    },
+                    "type" : {
+                      "const" : "PEM"
+                    }
+                  },
+                  "required" : [ "certContent", "keyContent" ]
+                } ],
+                "type" : "object",
+                "title" : "Key store"
+              },
+              "hostnameVerifier" : {
+                "$ref" : "#/definitions/sslTrustStoreHostnameVerifier"
+              },
+              "trustStore" : {
+                "oneOf" : [ {
+                  "type" : "object",
+                  "title" : "None",
+                  "properties" : {
+                    "type" : {
+                      "const" : ""
+                    }
+                  }
+                }, {
+                  "type" : "object",
+                  "title" : "JKS with path",
+                  "properties" : {
+                    "path" : {
+                      "$ref" : "#/definitions/sslTrustStorePath"
+                    },
+                    "password" : {
+                      "$ref" : "#/definitions/sslTrustStorePassword"
+                    },
+                    "type" : {
+                      "const" : "JKS"
+                    }
+                  },
+                  "required" : [ "password", "path" ]
+                }, {
+                  "type" : "object",
+                  "title" : "JKS with content",
+                  "properties" : {
+                    "password" : {
+                      "$ref" : "#/definitions/sslTrustStorePassword"
+                    },
+                    "type" : {
+                      "const" : "JKS"
+                    },
+                    "content" : {
+                      "$ref" : "#/definitions/sslTrustStoreContent"
+                    }
+                  },
+                  "required" : [ "password", "content" ]
+                }, {
+                  "type" : "object",
+                  "title" : "PKCS#12 / PFX with path",
+                  "properties" : {
+                    "path" : {
+                      "$ref" : "#/definitions/sslTrustStorePath"
+                    },
+                    "password" : {
+                      "$ref" : "#/definitions/sslTrustStorePassword"
+                    },
+                    "type" : {
+                      "const" : "PKCS12"
+                    }
+                  },
+                  "required" : [ "password", "path" ]
+                }, {
+                  "type" : "object",
+                  "title" : "PKCS#12 / PFX with content",
+                  "properties" : {
+                    "password" : {
+                      "$ref" : "#/definitions/sslTrustStorePassword"
+                    },
+                    "type" : {
+                      "const" : "PKCS12"
+                    },
+                    "content" : {
+                      "$ref" : "#/definitions/sslTrustStoreContent"
+                    }
+                  },
+                  "required" : [ "password", "content" ]
+                }, {
+                  "type" : "object",
+                  "title" : "PEM with path",
+                  "properties" : {
+                    "path" : {
+                      "$ref" : "#/definitions/sslTrustStorePath"
+                    },
+                    "password" : {
+                      "$ref" : "#/definitions/sslTrustStorePassword"
+                    },
+                    "type" : {
+                      "const" : "PEM"
+                    }
+                  },
+                  "required" : [ "password", "path" ]
+                }, {
+                  "type" : "object",
+                  "title" : "PEM with content",
+                  "properties" : {
+                    "password" : {
+                      "$ref" : "#/definitions/sslTrustStorePassword"
+                    },
+                    "type" : {
+                      "const" : "PEM"
+                    },
+                    "content" : {
+                      "$ref" : "#/definitions/sslTrustStoreContent"
+                    }
+                  },
+                  "required" : [ "password", "content" ]
+                } ],
+                "type" : "object",
+                "title" : "Truststore"
+              },
+              "trustAll" : {
+                "$ref" : "#/definitions/sslTrustStoreTrustAll"
+              }
+            }
+          },
+          "sslKeyStoreCertContent" : {
+            "format" : "text",
+            "type" : "string",
+            "title" : "Certificate"
+          },
+          "sslTrustStorePassword" : {
+            "gioConfig" : {
+              "banner" : {
+                "text" : "The password for the truststore file. If a password is not set, truststore file configured will still be used, but integrity checking is disabled. Truststore password is not supported for PEM format.",
+                "title" : "SSL truststore password"
+              }
+            },
+            "format" : "password",
+            "description" : "Truststore password",
+            "type" : "string",
+            "title" : "Password"
+          },
+          "sslKeyStoreKeyPassword" : {
+            "format" : "password",
+            "description" : "Password to use to access the key when protected by password",
+            "type" : "string",
+            "title" : "Key Password"
+          },
+          "followRedirects" : {
+            "default" : false,
+            "gioConfig" : {
+              "banner" : {
+                "text" : "When the connector receives a status code in the range 3xx from the backend, it follows the redirection provided by the Location response header.",
+                "title" : "Follow HTTP redirects"
+              }
+            },
+            "title" : "Follow HTTP redirects",
+            "type" : "boolean"
+          },
+          "sslKeyStoreAlias" : {
+            "description" : "Alias of the key to use in case the key store contains more than one key",
+            "type" : "string",
+            "title" : "Alias for the key"
+          },
+          "connectTimeout" : {
+            "default" : 3000,
+            "description" : "Maximum time to connect to the backend in milliseconds.",
+            "type" : "integer",
+            "title" : "Connect timeout (ms)"
+          },
+          "sslTrustStorePath" : {
+            "description" : "Path to the truststore file",
+            "type" : "string",
+            "title" : "Path to truststore"
+          },
+          "maxConcurrentConnections" : {
+            "default" : 20,
+            "description" : "Maximum pool size for connections.",
+            "type" : "integer",
+            "title" : "Max Concurrent Connections"
+          },
+          "headers" : {
+            "gioConfig" : {
+              "uiType" : "gio-headers-array"
+            },
+            "description" : "Default HTTP headers added or overridden by the API gateway to upstream",
+            "type" : "array",
+            "title" : "HTTP Headers",
+            "items" : {
+              "type" : "object",
+              "title" : "Header",
+              "properties" : {
+                "name" : {
+                  "type" : "string",
+                  "title" : "Name"
+                },
+                "value" : {
+                  "type" : "string",
+                  "title" : "Value"
+                }
+              },
+              "required" : [ "name", "value" ]
+            }
+          },
+          "keepAliveTimeout" : {
+            "default" : 30000,
+            "description" : "Maximum time a connection will remain unused in the pool in milliseconds. Once the timeout has elapsed, the unused connection will be evicted.",
+            "type" : "integer",
+            "title" : "Keep-alive timeout (ms)"
+          },
+          "keepAlive" : {
+            "default" : true,
+            "gioConfig" : {
+              "banner" : {
+                "text" : "Use an HTTP persistent connection to send and receive multiple HTTP requests / responses.",
+                "title" : "Enable keep-alive"
+              }
+            },
+            "title" : "Enable keep-alive",
+            "type" : "boolean"
+          },
+          "sslTrustStoreTrustAll" : {
+            "default" : false,
+            "description" : "Use this with caution (if over Internet). The gateway must trust any origin certificates. The connection will still be encrypted but this mode is vulnerable to 'man in the middle' attacks.",
+            "title" : "Trust all",
+            "type" : "boolean"
+          },
+          "http2MultiplexingLimit" : {
+            "default" : -1,
+            "gioConfig" : {
+              "banner" : {
+                "text" : "The maximum number of concurrent streams allowed for each HTTP/2 connection. The actual number of streams per connection is the minimum of this value and the server's initial settings. For example, if set to 10 and the server's initial setting is 1000, the max number of streams will be 10. If set to -1, the server's initial settings will be used. -1 is the default.",
+                "title" : "Max concurrent stream for an HTTP/2 connection"
+              }
+            },
+            "type" : "integer",
+            "title" : "Max concurrent stream for an HTTP/2 connection"
+          },
+          "propagateClientAcceptEncoding" : {
+            "gioConfig" : {
+              "banner" : {
+                "text" : "If the client request header includes a value for Accept-Encoding, the gateway will propagate it to the backend. The gateway will NEVER attempt to decompress the body content if the backend response is compressed (gzip, deflate). Therefore, transformation policies cannot be applied if the content body is compressed. If logging is enabled for the API, the compressed content body will be logged as is without any transformation applied. DO NOT activate this option if you plan to interact with body responses.",
+                "title" : "Propagate client Accept-Encoding header (no decompression if any)"
+              }
+            },
+            "description" : "Accept-Encoding can only be propagated if \"Enable compression\" is disabled.",
+            "title" : "Propagate client Accept-Encoding header",
+            "type" : "boolean"
+          },
+          "clearTextUpgrade" : {
+            "default" : true,
+            "gioConfig" : {
+              "banner" : {
+                "text" : "If enabled, an h2c connection is established using an HTTP/1.1 upgrade request. If disabled, h2c connection is established directly (with prior knowledge).",
+                "title" : "HTTP/2 Cleartext (H2C)"
+              }
+            },
+            "title" : "Allow h2c Clear Text Upgrade",
+            "type" : "boolean"
+          },
+          "sslKeyStorePassword" : {
+            "format" : "password",
+            "description" : "Password to use to open the key store",
+            "type" : "string",
+            "title" : "Password"
+          },
+          "proxy" : {
+            "oneOf" : [ {
+              "additionalProperties" : false,
+              "title" : "No proxy",
+              "properties" : {
+                "useSystemProxy" : {
+                  "const" : false
+                },
+                "enabled" : {
+                  "const" : false
+                }
+              }
+            }, {
+              "additionalProperties" : false,
+              "title" : "Use proxy configured at system level",
+              "properties" : {
+                "useSystemProxy" : {
+                  "const" : true
+                },
+                "enabled" : {
+                  "const" : true
+                }
+              }
+            }, {
+              "additionalProperties" : false,
+              "title" : "Use proxy for client connections",
+              "properties" : {
+                "password" : {
+                  "format" : "password",
+                  "description" : "Optional proxy password",
+                  "type" : "string",
+                  "title" : "Proxy password"
+                },
+                "port" : {
+                  "description" : "Proxy port to connect to",
+                  "type" : "integer",
+                  "title" : "Proxy port"
+                },
+                "host" : {
+                  "description" : "Proxy host to connect to",
+                  "type" : "string",
+                  "title" : "Proxy host"
+                },
+                "useSystemProxy" : {
+                  "const" : false
+                },
+                "type" : {
+                  "default" : "HTTP",
+                  "description" : "The type of the proxy",
+                  "type" : "string",
+                  "title" : "Proxy Type",
+                  "enum" : [ "HTTP", "SOCKS4", "SOCKS5" ]
+                },
+                "enabled" : {
+                  "const" : true
+                },
+                "username" : {
+                  "description" : "Optional proxy username",
+                  "type" : "string",
+                  "title" : "Proxy username"
+                }
+              },
+              "required" : [ "host", "port" ]
+            } ],
+            "type" : "object",
+            "title" : "Proxy Options"
+          },
+          "readTimeout" : {
+            "default" : 10000,
+            "description" : "Maximum time given to the backend to complete the request (including response) in milliseconds.",
+            "type" : "integer",
+            "title" : "Read timeout (ms)"
+          },
+          "idleTimeout" : {
+            "default" : 60000,
+            "gioConfig" : {
+              "banner" : {
+                "text" : "Maximum time a connection will be opened if no data is received nor sent. Once the timeout has elapsed, the unused connection will be closed, allowing to free the associated resources.",
+                "title" : "Idle timeout"
+              }
+            },
+            "type" : "integer",
+            "title" : "Idle timeout (ms)"
+          },
+          "sslTrustStoreContent" : {
+            "format" : "text",
+            "description" : "Binary content as Base64",
+            "type" : "string",
+            "title" : "Content"
+          },
+          "http" : {
+            "oneOf" : [ {
+              "additionalProperties" : false,
+              "title" : "HTTP 1.1",
+              "properties" : {
+                "keepAliveTimeout" : {
+                  "$ref" : "#/definitions/keepAliveTimeout"
+                },
+                "keepAlive" : {
+                  "$ref" : "#/definitions/keepAlive"
+                },
+                "followRedirects" : {
+                  "$ref" : "#/definitions/followRedirects"
+                },
+                "readTimeout" : {
+                  "$ref" : "#/definitions/readTimeout"
+                },
+                "idleTimeout" : {
+                  "$ref" : "#/definitions/idleTimeout"
+                },
+                "connectTimeout" : {
+                  "$ref" : "#/definitions/connectTimeout"
+                },
+                "propagateClientAcceptEncoding" : {
+                  "$ref" : "#/definitions/propagateClientAcceptEncoding"
+                },
+                "useCompression" : {
+                  "$ref" : "#/definitions/useCompression"
+                },
+                "maxConcurrentConnections" : {
+                  "$ref" : "#/definitions/maxConcurrentConnections"
+                },
+                "version" : {
+                  "const" : "HTTP_1_1"
+                },
+                "pipelining" : {
+                  "$ref" : "#/definitions/pipelining"
+                }
+              },
+              "required" : [ "connectTimeout", "readTimeout", "idleTimeout", "maxConcurrentConnections" ]
+            }, {
+              "additionalProperties" : false,
+              "title" : "HTTP 2",
+              "properties" : {
+                "keepAliveTimeout" : {
+                  "$ref" : "#/definitions/keepAliveTimeout"
+                },
+                "keepAlive" : {
+                  "$ref" : "#/definitions/keepAlive"
+                },
+                "http2MultiplexingLimit" : {
+                  "$ref" : "#/definitions/http2MultiplexingLimit"
+                },
+                "propagateClientAcceptEncoding" : {
+                  "$ref" : "#/definitions/propagateClientAcceptEncoding"
+                },
+                "useCompression" : {
+                  "$ref" : "#/definitions/useCompression"
+                },
+                "version" : {
+                  "const" : "HTTP_2"
+                },
+                "pipelining" : {
+                  "$ref" : "#/definitions/pipelining"
+                },
+                "clearTextUpgrade" : {
+                  "$ref" : "#/definitions/clearTextUpgrade"
+                },
+                "followRedirects" : {
+                  "$ref" : "#/definitions/followRedirects"
+                },
+                "readTimeout" : {
+                  "$ref" : "#/definitions/readTimeout"
+                },
+                "idleTimeout" : {
+                  "$ref" : "#/definitions/idleTimeout"
+                },
+                "connectTimeout" : {
+                  "$ref" : "#/definitions/connectTimeout"
+                },
+                "maxConcurrentConnections" : {
+                  "$ref" : "#/definitions/maxConcurrentConnections"
+                }
+              },
+              "required" : [ "connectTimeout", "readTimeout", "idleTimeout", "maxConcurrentConnections" ]
+            } ],
+            "type" : "object",
+            "title" : "Security configuration"
+          },
+          "sslKeyStoreCertPath" : {
+            "description" : "Path to cert file (.PEM)",
+            "type" : "string",
+            "title" : "Path to cert file"
+          }
+        },
+        "properties" : {
+          "headers" : {
+            "$ref" : "#/definitions/headers"
+          },
+          "proxy" : {
+            "$ref" : "#/definitions/proxy"
+          },
+          "http" : {
+            "$ref" : "#/definitions/http"
+          },
+          "ssl" : {
+            "$ref" : "#/definitions/ssl"
+          }
+        }
+      },
+      "endpoints" : [ {
+        "name" : "server1",
+        "type" : "http-proxy",
+        "weight" : 1,
+        "inheritConfiguration" : true,
+        "configuration" : {
+          "target" : "http://httpbin.org/"
+        },
+        "services" : { },
+        "secondary" : false
+      } ],
+      "services" : { }
+    } ],
+    "analytics" : {
+      "enabled" : true,
+      "logging" : {
+        "content" : {
+          "headers" : true,
+          "messageHeaders" : false,
+          "payload" : true,
+          "messagePayload" : false,
+          "messageMetadata" : false
+        },
+        "phase" : {
+          "request" : true,
+          "response" : true
+        },
+        "mode" : {
+          "endpoint" : true,
+          "entrypoint" : true
+        }
+      }
+    },
+    "flowExecution" : {
+      "mode" : "DEFAULT",
+      "matchRequired" : false
+    },
+    "flows" : [ {
+      "id" : "404619f3-373d-4750-8619-f3373d875014",
+      "name" : "",
+      "enabled" : true,
+      "selectors" : [ {
+        "type" : "CONDITION",
+        "condition" : ""
+      }, {
+        "type" : "HTTP",
+        "path" : "/status/:code",
+        "pathOperator" : "EQUALS",
+        "methods" : [ "GET" ]
+      } ],
+      "request" : [ ],
+      "response" : [ ],
+      "subscribe" : [ ],
+      "publish" : [ ]
+    }, {
+      "id" : "75c158ce-1e8c-4913-8158-ce1e8c3913d7",
+      "name" : "",
+      "enabled" : true,
+      "selectors" : [ {
+        "type" : "CONDITION",
+        "condition" : ""
+      }, {
+        "type" : "HTTP",
+        "path" : "/get",
+        "pathOperator" : "EQUALS",
+        "methods" : [ "GET" ]
+      } ],
+      "request" : [ ],
+      "response" : [ ],
+      "subscribe" : [ ],
+      "publish" : [ ]
+    }, {
+      "id" : "f4875f0e-ce59-4b70-875f-0ece59ab706c",
+      "name" : "",
+      "enabled" : true,
+      "selectors" : [ {
+        "type" : "CONDITION",
+        "condition" : ""
+      }, {
+        "type" : "HTTP",
+        "path" : "/post",
+        "pathOperator" : "EQUALS",
+        "methods" : [ "POST" ]
+      } ],
+      "request" : [ ],
+      "response" : [ ],
+      "subscribe" : [ ],
+      "publish" : [ ]
+    }, {
+      "id" : "ba988c9b-ff7a-4c1d-988c-9bff7a7c1d10",
+      "name" : "",
+      "enabled" : true,
+      "selectors" : [ {
+        "type" : "CONDITION",
+        "condition" : ""
+      }, {
+        "type" : "HTTP",
+        "path" : "/patch",
+        "pathOperator" : "EQUALS",
+        "methods" : [ "PATCH" ]
+      } ],
+      "request" : [ ],
+      "response" : [ ],
+      "subscribe" : [ ],
+      "publish" : [ ]
+    }, {
+      "id" : "b34678da-4cad-4705-8678-da4cadb705fc",
+      "name" : "",
+      "enabled" : true,
+      "selectors" : [ {
+        "type" : "CONDITION",
+        "condition" : ""
+      }, {
+        "type" : "HTTP",
+        "path" : "/put",
+        "pathOperator" : "EQUALS",
+        "methods" : [ "PUT" ]
+      } ],
+      "request" : [ ],
+      "response" : [ ],
+      "subscribe" : [ ],
+      "publish" : [ ]
+    }, {
+      "id" : "60df6da6-58d8-4c67-9f6d-a658d84c67df",
+      "name" : "",
+      "enabled" : true,
+      "selectors" : [ {
+        "type" : "CONDITION",
+        "condition" : ""
+      }, {
+        "type" : "HTTP",
+        "path" : "/delete",
+        "pathOperator" : "EQUALS",
+        "methods" : [ "DELETE" ]
+      } ],
+      "request" : [ ],
+      "response" : [ ],
+      "subscribe" : [ ],
+      "publish" : [ ]
+    }, {
+      "id" : "6af4f3fa-4865-4ede-b4f3-fa48650ede31",
+      "name" : "",
+      "enabled" : true,
+      "selectors" : [ {
+        "type" : "CONDITION",
+        "condition" : ""
+      }, {
+        "type" : "HTTP",
+        "path" : "/xml",
+        "pathOperator" : "EQUALS",
+        "methods" : [ "GET" ]
+      } ],
+      "request" : [ ],
+      "response" : [ ],
+      "subscribe" : [ ],
+      "publish" : [ ]
+    }, {
+      "id" : "ffdfa62f-7dca-46c5-9fa6-2f7dca76c51c",
+      "name" : "",
+      "enabled" : true,
+      "selectors" : [ {
+        "type" : "CONDITION",
+        "condition" : ""
+      }, {
+        "type" : "HTTP",
+        "path" : "/ip",
+        "pathOperator" : "EQUALS",
+        "methods" : [ "GET" ]
+      } ],
+      "request" : [ ],
+      "response" : [ ],
+      "subscribe" : [ ],
+      "publish" : [ ]
+    }, {
+      "id" : "eed60579-28ae-4576-9605-7928aea576a7",
+      "name" : "",
+      "enabled" : true,
+      "selectors" : [ {
+        "type" : "CONDITION",
+        "condition" : ""
+      }, {
+        "type" : "HTTP",
+        "path" : "/user-agent",
+        "pathOperator" : "EQUALS",
+        "methods" : [ "GET" ]
+      } ],
+      "request" : [ ],
+      "response" : [ ],
+      "subscribe" : [ ],
+      "publish" : [ ]
+    }, {
+      "id" : "a7372b1c-a28f-4217-b72b-1ca28f52176b",
+      "name" : "",
+      "enabled" : true,
+      "selectors" : [ {
+        "type" : "CONDITION",
+        "condition" : ""
+      }, {
+        "type" : "HTTP",
+        "path" : "/headers",
+        "pathOperator" : "EQUALS",
+        "methods" : [ "GET" ]
+      } ],
+      "request" : [ ],
+      "response" : [ ],
+      "subscribe" : [ ],
+      "publish" : [ ]
+    }, {
+      "id" : "aba72734-9bd9-4e7f-a727-349bd9fe7fb9",
+      "name" : "",
+      "enabled" : true,
+      "selectors" : [ {
+        "type" : "CONDITION",
+        "condition" : ""
+      }, {
+        "type" : "HTTP",
+        "path" : "/delay/:seconds",
+        "pathOperator" : "EQUALS",
+        "methods" : [ "GET" ]
+      } ],
+      "request" : [ ],
+      "response" : [ ],
+      "subscribe" : [ ],
+      "publish" : [ ]
+    }, {
+      "id" : "93dee744-f258-40b2-9ee7-44f25850b202",
+      "name" : "",
+      "enabled" : true,
+      "selectors" : [ {
+        "type" : "CONDITION",
+        "condition" : ""
+      }, {
+        "type" : "HTTP",
+        "path" : "/cache/:maxAge",
+        "pathOperator" : "EQUALS",
+        "methods" : [ "GET" ]
+      } ],
+      "request" : [ ],
+      "response" : [ ],
+      "subscribe" : [ ],
+      "publish" : [ ]
+    }, {
+      "id" : "cc28d79c-575b-40a5-a8d7-9c575b90a503",
+      "name" : "",
+      "enabled" : true,
+      "selectors" : [ {
+        "type" : "CONDITION",
+        "condition" : ""
+      }, {
+        "type" : "HTTP",
+        "path" : "/uuid",
+        "pathOperator" : "EQUALS",
+        "methods" : [ "GET" ]
+      } ],
+      "request" : [ ],
+      "response" : [ ],
+      "subscribe" : [ ],
+      "publish" : [ ]
+    }, {
+      "id" : "f657b27b-b299-4b6e-97b2-7bb2996b6ead",
+      "name" : "",
+      "enabled" : true,
+      "selectors" : [ {
+        "type" : "CONDITION",
+        "condition" : ""
+      }, {
+        "type" : "HTTP",
+        "path" : "/anything",
+        "pathOperator" : "EQUALS",
+        "methods" : [ "GET" ]
+      } ],
+      "request" : [ ],
+      "response" : [ ],
+      "subscribe" : [ ],
+      "publish" : [ ]
+    }, {
+      "id" : "879af707-d3ea-40a2-9af7-07d3ea80a24b",
+      "name" : "",
+      "enabled" : true,
+      "selectors" : [ {
+        "type" : "CONDITION",
+        "condition" : ""
+      }, {
+        "type" : "HTTP",
+        "path" : "/gzip",
+        "pathOperator" : "EQUALS",
+        "methods" : [ "GET" ]
+      } ],
+      "request" : [ ],
+      "response" : [ ],
+      "subscribe" : [ ],
+      "publish" : [ ]
+    }, {
+      "id" : "85ecd2f0-4118-45bc-acd2-f04118f5bc12",
+      "name" : "",
+      "enabled" : true,
+      "selectors" : [ {
+        "type" : "CONDITION",
+        "condition" : ""
+      }, {
+        "type" : "HTTP",
+        "path" : "/base64/:value",
+        "pathOperator" : "EQUALS",
+        "methods" : [ "GET" ]
+      } ],
+      "request" : [ ],
+      "response" : [ ],
+      "subscribe" : [ ],
+      "publish" : [ ]
+    }, {
+      "id" : "abb100a1-1aea-4a77-b100-a11aea5a77c7",
+      "name" : "",
+      "enabled" : true,
+      "selectors" : [ {
+        "type" : "CONDITION",
+        "condition" : ""
+      }, {
+        "type" : "HTTP",
+        "path" : "/deflate",
+        "pathOperator" : "EQUALS",
+        "methods" : [ "GET" ]
+      } ],
+      "request" : [ ],
+      "response" : [ ],
+      "subscribe" : [ ],
+      "publish" : [ ]
+    }, {
+      "id" : "72b14953-f8ea-4fae-b149-53f8eacfaeac",
+      "name" : "",
+      "enabled" : true,
+      "selectors" : [ {
+        "type" : "CONDITION",
+        "condition" : ""
+      }, {
+        "type" : "HTTP",
+        "path" : "/brotli",
+        "pathOperator" : "EQUALS",
+        "methods" : [ "GET" ]
+      } ],
+      "request" : [ ],
+      "response" : [ ],
+      "subscribe" : [ ],
+      "publish" : [ ]
+    }, {
+      "id" : "aa3f47bb-fa1c-4d27-bf47-bbfa1c5d2757",
+      "name" : "",
+      "enabled" : true,
+      "selectors" : [ {
+        "type" : "CONDITION",
+        "condition" : ""
+      }, {
+        "type" : "HTTP",
+        "path" : "/response-headers",
+        "pathOperator" : "EQUALS",
+        "methods" : [ "GET" ]
+      } ],
+      "request" : [ ],
+      "response" : [ ],
+      "subscribe" : [ ],
+      "publish" : [ ]
+    }, {
+      "id" : "7657d914-ca9d-430e-97d9-14ca9d330eff",
+      "name" : "",
+      "enabled" : true,
+      "selectors" : [ {
+        "type" : "CONDITION",
+        "condition" : ""
+      }, {
+        "type" : "HTTP",
+        "path" : "/bytes/:number",
+        "pathOperator" : "EQUALS",
+        "methods" : [ "GET" ]
+      } ],
+      "request" : [ ],
+      "response" : [ ],
+      "subscribe" : [ ],
+      "publish" : [ ]
+    }, {
+      "id" : "60c697ad-5806-4b74-8697-ad58064b74a0",
+      "name" : "",
+      "enabled" : true,
+      "selectors" : [ {
+        "type" : "CONDITION",
+        "condition" : ""
+      }, {
+        "type" : "HTTP",
+        "path" : "/redirect-to",
+        "pathOperator" : "EQUALS",
+        "methods" : [ "GET" ]
+      } ],
+      "request" : [ ],
+      "response" : [ ],
+      "subscribe" : [ ],
+      "publish" : [ ]
+    }, {
+      "id" : "ffb8468e-f0b0-40f3-b846-8ef0b000f3d6",
+      "name" : "",
+      "enabled" : true,
+      "selectors" : [ {
+        "type" : "CONDITION",
+        "condition" : ""
+      }, {
+        "type" : "HTTP",
+        "path" : "/stream/:number",
+        "pathOperator" : "EQUALS",
+        "methods" : [ "GET" ]
+      } ],
+      "request" : [ ],
+      "response" : [ ],
+      "subscribe" : [ ],
+      "publish" : [ ]
+    } ],
+    "id" : "ec2eb74a-4c19-4370-aeb7-4a4c191370ee",
+    "name" : "httpbin.org",
+    "description" : "API Management facade for a very handy and free online HTTP tool.",
+    "crossId" : "7f438302-488a-4495-8383-02488ae4956e",
+    "apiVersion" : "1.0",
+    "deployedAt" : "2025-01-31T10:31:21.938Z",
+    "createdAt" : "2025-01-31T09:48:15.445Z",
+    "updatedAt" : "2025-01-31T10:31:21.938Z",
+    "disableMembershipNotifications" : false,
+    "groups" : [ ],
+    "state" : "STARTED",
+    "visibility" : "PUBLIC",
+    "lifecycleState" : "PUBLISHED",
+    "tags" : [ ],
+    "primaryOwner" : {
+      "id" : "d9248181-7702-4091-a481-81770260910b",
+      "displayName" : "admin",
+      "type" : "USER"
+    },
+    "originContext" : {
+      "origin" : "MANAGEMENT"
+    },
+    "responseTemplates" : { },
+    "resources" : [ ],
+    "properties" : [ ]
+  },
+  "members" : [ {
+    "id" : "d9248181-7702-4091-a481-81770260910b",
+    "displayName" : "admin",
+    "roles" : [ {
+      "name" : "PRIMARY_OWNER",
+      "scope" : "API"
+    } ]
+  } ],
+  "metadata" : [ {
+    "key" : "email-support",
+    "name" : "email-support",
+    "format" : "MAIL",
+    "value" : "${(api.primaryOwner.email)!''}",
+    "defaultValue" : "support@change.me"
+  } ],
+  "pages" : [ {
+    "id" : "f2fcc304-f546-4b2c-bcc3-04f5467b2c64",
+    "name" : "Swagger",
+    "type" : "SWAGGER",
+    "content" : "{\n    \"swagger\": \"2.0\",\n    \"info\": {\n        \"title\": \"httpbin.org\",\n        \"description\": \"API Management facade for a very handy and free online HTTP tool.\",\n        \"version\": \"1.0\"\n    },\n    \"host\": \"httpbin.org\",\n    \"schemes\": [\n        \"http\",\n        \"https\"\n    ],\n    \"paths\": {\n        \"/status/{code}\": {\n            \"get\": {\n                \"description\": \"Returns provided HTTP Status code.\",\n                \"operationId\": \"/status\",\n                \"parameters\": [{\n                    \"name\": \"code\",\n                    \"in\": \"path\",\n                    \"description\": \"HTTP code to return.\",\n                    \"required\": true,\n                    \"type\": \"number\",\n                    \"default\": 200,\n                    \"enum\": [\n                        200\n                    ]\n                }],\n                \"responses\": {}\n            }\n        },\n        \"/get\": {\n            \"get\": {\n                \"description\": \"Returns GET data.\",\n                \"operationId\": \"/get\",\n                \"responses\": {}\n            }\n        },\n        \"/post\": {\n            \"post\": {\n                \"description\": \"Returns POST data.\",\n                \"operationId\": \"/post\",\n                \"responses\": {}\n            }\n        },\n        \"/patch\": {\n            \"patch\": {\n                \"description\": \"Returns PATCH data.\",\n                \"operationId\": \"/patch\",\n                \"responses\": {}\n            }\n        },\n        \"/put\": {\n            \"put\": {\n                \"description\": \"Returns PUT data.\",\n                \"operationId\": \"/put\",\n                \"responses\": {}\n            }\n        },\n        \"/delete\": {\n            \"delete\": {\n                \"description\": \"Returns DELETE data.\",\n                \"operationId\": \"/delete\",\n                \"responses\": {}\n            }\n        },\n        \"/xml\": {\n            \"get\": {\n                \"description\": \"Returns some XML.\",\n                \"operationId\": \"/xml\",\n                \"responses\": {}\n            }\n        },\n        \"/ip\": {\n            \"get\": {\n                \"description\": \"Returns origin IP.\",\n                \"operationId\": \"/ip\",\n                \"responses\": {}\n            }\n        },\n        \"/user-agent\": {\n            \"get\": {\n                \"description\": \"Returns user agent string.\",\n                \"operationId\": \"/user-agent\",\n                \"responses\": {}\n            }\n        },\n        \"/headers\": {\n            \"get\": {\n                \"description\": \"Returns headers dictionary.\",\n                \"operationId\": \"/headers\",\n                \"responses\": {}\n            }\n        },\n        \"/delay/{seconds}\": {\n            \"get\": {\n                \"description\": \"Delays responding for n–10 seconds.\",\n                \"operationId\": \"/delay\",\n                \"parameters\": [{\n                    \"name\": \"seconds\",\n                    \"in\": \"path\",\n                    \"description\": \"\",\n                    \"required\": true,\n                    \"type\": \"string\",\n                    \"default\": 2,\n                    \"enum\": [\n                        2\n                    ]\n                }],\n                \"responses\": {}\n            }\n        },\n        \"/cache/{maxAge}\": {\n            \"get\": {\n                \"operationId\": \"/cache\",\n                \"description\": \"Sets a Cache-Control header for n seconds.\",\n                \"parameters\": [{\n                    \"name\": \"maxAge\",\n                    \"in\": \"path\",\n                    \"description\": \"\",\n                    \"required\": true,\n                    \"type\": \"string\",\n                    \"default\": 10,\n                    \"enum\": [\n                        10\n                    ]\n                }],\n                \"responses\": {}\n            }\n        },\n        \"/uuid\": {\n            \"get\": {\n                \"operationId\": \"/uuid\",\n                \"description\": \"Returns UUID4.\",\n                \"responses\": {}\n            }\n        },\n        \"/anything\": {\n            \"get\": {\n                \"operationId\": \"/anything\",\n                \"description\": \"Returns request data, including method used.\",\n                \"responses\": {}\n            }\n        },\n        \"/gzip\": {\n            \"get\": {\n                \"operationId\": \"/gzip\",\n                \"description\": \"Returns gzip-encoded data.\",\n                \"responses\": {}\n            }\n        },\n        \"/base64/{value}\": {\n            \"get\": {\n                \"operationId\": \"/base64\",\n                \"description\": \"Decodes base64url-encoded string.\",\n                \"parameters\": [{\n                    \"name\": \"value\",\n                    \"in\": \"path\",\n                    \"description\": \"Base64 encoded string.\",\n                    \"required\": true,\n                    \"type\": \"string\",\n                    \"default\": \"aGVsbG8gd29ybGQNCg%3D%3D\"\n                }],\n                \"responses\": {}\n            }\n        },\n        \"/deflate\": {\n            \"get\": {\n                \"operationId\": \"/deflate\",\n                \"description\": \"Returns deflate-encoded data.\",\n                \"responses\": {}\n            }\n        },\n        \"/brotli\": {\n            \"get\": {\n                \"operationId\": \"/brotli\",\n                \"description\": \"Returns brotli-encoded data.\",\n                \"responses\": {}\n            }\n        },\n        \"/response-headers\": {\n            \"get\": {\n                \"operationId\": \"/response-headers\",\n                \"description\": \"Returns key-value query parameters as response headers.\",\n                \"responses\": {}\n            }\n        },\n        \"/bytes/{number}\": {\n            \"get\": {\n                \"operationId\": \"/bytes\",\n                \"description\": \"Generates n random bytes of binary data\",\n                \"parameters\": [{\n                    \"name\": \"number\",\n                    \"in\": \"path\",\n                    \"description\": \"Number of bytes to return.\",\n                    \"required\": true,\n                    \"type\": \"string\",\n                    \"default\": \"1024\"\n                }],\n                \"responses\": {}\n            }\n        },\n        \"/redirect-to\": {\n            \"get\": {\n                \"operationId\": \"/redirect-to\",\n                \"description\": \"302 redirects to a URL provided in query\",\n                \"parameters\": [{\n                    \"name\": \"url\",\n                    \"in\": \"query\",\n                    \"description\": \"Redirect target\",\n                    \"required\": true,\n                    \"type\": \"string\",\n                    \"default\": \"http://example.com\"\n                }],\n                \"responses\": {}\n            }\n        },\n        \"/stream/{number}\": {\n            \"get\": {\n                \"operationId\": \"/stream\",\n                \"description\": \"Streams min(number, 100) lines.\",\n                \"parameters\": [{\n                    \"name\": \"number\",\n                    \"in\": \"path\",\n                    \"description\": \"Number of lines to stream.\",\n                    \"required\": true,\n                    \"type\": \"number\",\n                    \"default\": \"10\"\n                }],\n                \"responses\": {}\n            }\n        }\n    }\n}\n",
+    "order" : 0,
+    "published" : true,
+    "visibility" : "PUBLIC",
+    "updatedAt" : "2025-02-04T09:51:51.687Z",
+    "contentType" : "application/json",
+    "configuration" : {
+      "viewer" : "Swagger",
+      "entrypointAsBasePath" : "false",
+      "entrypointsAsServers" : "false",
+      "tryItURL" : "http://httpbin/",
+      "tryIt" : "true",
+      "tryItAnonymous" : "true",
+      "showURL" : "false",
+      "displayOperationId" : "true",
+      "usePkce" : "false",
+      "docExpansion" : "none",
+      "enableFiltering" : "false",
+      "showExtensions" : "false",
+      "showCommonExtensions" : "false",
+      "maxDisplayedTags" : "-1"
+    },
+    "homepage" : false,
+    "parentPath" : "",
+    "excludedAccessControls" : false,
+    "accessControls" : [ ]
+  } ],
+  "plans" : [ {
+    "definitionVersion" : "V4",
+    "flows" : [ {
+      "id" : "0a9c9733-b2fb-4450-9c97-33b2fbe450db",
+      "enabled" : true,
+      "selectors" : [ {
+        "type" : "HTTP",
+        "path" : "/",
+        "pathOperator" : "STARTS_WITH"
+      } ],
+      "request" : [ ],
+      "response" : [ ],
+      "subscribe" : [ ],
+      "publish" : [ ]
+    } ],
+    "id" : "83794217-727e-46f8-b942-17727e66f8b2",
+    "name" : "Plan_validation_jwt",
+    "description" : "plan avec validation jwt ( check expiration time et sgnature )",
+    "apiId" : "ec2eb74a-4c19-4370-aeb7-4a4c191370ee",
+    "security" : {
+      "type" : "JWT",
+      "configuration" : {
+        "signature" : "RSA_RS256",
+        "publicKeyResolver" : "JWKS_URL",
+        "resolverParameter" : "http://gio_am_nginx/am/secdomain/oidc/.well-known/jwks.json",
+        "connectTimeout" : 2000,
+        "requestTimeout" : 2000,
+        "useSystemProxy" : false,
+        "extractClaims" : false,
+        "propagateAuthHeader" : true,
+        "userClaim" : "sub",
+        "confirmationMethodValidation" : {
+          "ignoreMissing" : false,
+          "certificateBoundThumbprint" : {
+            "enabled" : false,
+            "extractCertificateFromHeader" : false,
+            "headerName" : "ssl-client-cert"
+          }
+        },
+        "tokenTypValidation" : {
+          "enabled" : false,
+          "ignoreMissing" : false,
+          "expectedValues" : [ "JWT" ],
+          "ignoreCase" : false
+        }
+      }
+    },
+    "mode" : "STANDARD",
+    "characteristics" : [ ],
+    "commentMessage" : "",
+    "commentRequired" : false,
+    "createdAt" : "2025-01-31T09:57:27.102Z",
+    "excludedGroups" : [ ],
+    "generalConditions" : "",
+    "order" : 1,
+    "publishedAt" : "2025-01-31T09:57:39.009Z",
+    "status" : "PUBLISHED",
+    "tags" : [ ],
+    "type" : "API",
+    "updatedAt" : "2025-01-31T09:57:39.009Z",
+    "validation" : "MANUAL"
+  } ],
+  "apiMedia" : [ ]
+}

@@ -1,0 +1,36 @@
+info:
+  version: 1.0.0
+  title: Ordering and Fulfillment
+  name: ordering-and-fulfillment
+gateways:
+  - datapower-api-gateway
+plans:
+  default-plan:
+    title: Default Plan
+    description: Default Plan
+    rate-limits:
+      default:
+        value: 100/1hour
+    apis:
+      order2.0.0: {}
+      stock1.0.0: {}
+apis:
+  order2.0.0:
+    $ref: api/orders_api.yaml
+  stock1.0.0:
+    $ref: api/stock.yaml
+  httpbin1.0:
+    $ref: api/httpbin_api.json
+visibility:
+  view:
+    type: public
+    orgs: []
+    tags: []
+    enabled: true
+  subscribe:
+    type: authenticated
+    orgs: []
+    tags: []
+    enabled: true
+product: 1.0.0
+
