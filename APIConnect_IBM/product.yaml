@@ -20,7 +20,7 @@ apis:
   stock1.0.0:
     $ref: api/stock.yaml
   httpbin1.0:
-    $ref: api/httpbin_api.json
+    $ref: api/httpbin_api.yaml
 visibility:
   view:
     type: public

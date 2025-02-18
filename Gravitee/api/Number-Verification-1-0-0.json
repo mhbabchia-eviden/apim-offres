@@ -1,0 +1,832 @@
+{
+  "api" : {
+    "definitionVersion" : "V4",
+    "type" : "PROXY",
+    "listeners" : [ {
+      "type" : "HTTP",
+      "paths" : [ {
+        "path" : "/camara/number-verification/",
+        "overrideAccess" : false
+      } ],
+      "entrypoints" : [ {
+        "type" : "http-proxy",
+        "qos" : "AUTO"
+      } ]
+    } ],
+    "endpointGroups" : [ {
+      "name" : "default-group",
+      "type" : "http-proxy",
+      "loadBalancer" : {
+        "type" : "ROUND_ROBIN"
+      },
+      "sharedConfiguration" : {
+        "$schema" : "http://json-schema.org/draft-07/schema#",
+        "type" : "object",
+        "definitions" : {
+          "sslKeyStoreKeyContent" : {
+            "format" : "text",
+            "type" : "string",
+            "title" : "Private key"
+          },
+          "sslKeyStoreContent" : {
+            "format" : "text",
+            "description" : "Binary content as Base64",
+            "type" : "string",
+            "title" : "Content"
+          },
+          "sslKeyStoreKeyPath" : {
+            "description" : "Path to private key file (.PEM)",
+            "type" : "string",
+            "title" : "Path to private key file"
+          },
+          "useCompression" : {
+            "default" : true,
+            "gioConfig" : {
+              "banner" : {
+                "text" : "The gateway can let the remote http server know that it supports compression. In case the remote http server returns a compressed response, the gateway will decompress it. Leave that option off if you don't want compression between the gateway and the remote server.",
+                "title" : "Enable compression (gzip, deflate)"
+              }
+            },
+            "title" : "Enable compression (gzip, deflate)",
+            "type" : "boolean"
+          },
+          "sslKeyStorePath" : {
+            "description" : "Path to the key store file",
+            "type" : "string",
+            "title" : "Path to key store"
+          },
+          "pipelining" : {
+            "default" : false,
+            "gioConfig" : {
+              "banner" : {
+                "text" : "When pipe-lining is enabled requests will be written to connections without waiting for previous responses to return",
+                "title" : "Enable HTTP pipelining"
+              }
+            },
+            "title" : "Enable HTTP pipelining",
+            "type" : "boolean"
+          },
+          "sslTrustStoreHostnameVerifier" : {
+            "default" : true,
+            "description" : "Use to enable host name verification",
+            "title" : "Verify Host",
+            "type" : "boolean"
+          },
+          "ssl" : {
+            "type" : "object",
+            "title" : "SSL Options",
+            "properties" : {
+              "keyStore" : {
+                "oneOf" : [ {
+                  "type" : "object",
+                  "title" : "None",
+                  "properties" : {
+                    "type" : {
+                      "const" : ""
+                    }
+                  }
+                }, {
+                  "type" : "object",
+                  "title" : "JKS with path",
+                  "properties" : {
+                    "path" : {
+                      "$ref" : "#/definitions/sslKeyStorePath"
+                    },
+                    "password" : {
+                      "$ref" : "#/definitions/sslKeyStorePassword"
+                    },
+                    "keyPassword" : {
+                      "$ref" : "#/definitions/sslKeyStoreKeyPassword"
+                    },
+                    "alias" : {
+                      "$ref" : "#/definitions/sslKeyStoreAlias"
+                    },
+                    "type" : {
+                      "const" : "JKS"
+                    }
+                  },
+                  "required" : [ "password", "path" ]
+                }, {
+                  "type" : "object",
+                  "title" : "JKS with content",
+                  "properties" : {
+                    "password" : {
+                      "$ref" : "#/definitions/sslKeyStorePassword"
+                    },
+                    "keyPassword" : {
+                      "$ref" : "#/definitions/sslKeyStoreKeyPassword"
+                    },
+                    "alias" : {
+                      "$ref" : "#/definitions/sslKeyStoreAlias"
+                    },
+                    "type" : {
+                      "const" : "JKS"
+                    },
+                    "content" : {
+                      "$ref" : "#/definitions/sslKeyStoreContent"
+                    }
+                  },
+                  "required" : [ "password", "content" ]
+                }, {
+                  "type" : "object",
+                  "title" : "PKCS#12 / PFX with path",
+                  "properties" : {
+                    "path" : {
+                      "$ref" : "#/definitions/sslKeyStorePath"
+                    },
+                    "password" : {
+                      "$ref" : "#/definitions/sslKeyStorePassword"
+                    },
+                    "keyPassword" : {
+                      "$ref" : "#/definitions/sslKeyStoreKeyPassword"
+                    },
+                    "alias" : {
+                      "$ref" : "#/definitions/sslKeyStoreAlias"
+                    },
+                    "type" : {
+                      "const" : "PKCS12"
+                    }
+                  },
+                  "required" : [ "password", "path" ]
+                }, {
+                  "type" : "object",
+                  "title" : "PKCS#12 / PFX with content",
+                  "properties" : {
+                    "password" : {
+                      "$ref" : "#/definitions/sslKeyStorePassword"
+                    },
+                    "keyPassword" : {
+                      "$ref" : "#/definitions/sslKeyStoreKeyPassword"
+                    },
+                    "alias" : {
+                      "$ref" : "#/definitions/sslKeyStoreAlias"
+                    },
+                    "type" : {
+                      "const" : "PKCS12"
+                    },
+                    "content" : {
+                      "$ref" : "#/definitions/sslKeyStoreContent"
+                    }
+                  },
+                  "required" : [ "password", "content" ]
+                }, {
+                  "type" : "object",
+                  "title" : "PEM with path",
+                  "properties" : {
+                    "certPath" : {
+                      "$ref" : "#/definitions/sslKeyStoreCertPath"
+                    },
+                    "keyPath" : {
+                      "$ref" : "#/definitions/sslKeyStoreKeyPath"
+                    },
+                    "type" : {
+                      "const" : "PEM"
+                    }
+                  },
+                  "required" : [ "certPath", "keyPath" ]
+                }, {
+                  "type" : "object",
+                  "title" : "PEM with content",
+                  "properties" : {
+                    "certContent" : {
+                      "$ref" : "#/definitions/sslKeyStoreCertContent"
+                    },
+                    "keyContent" : {
+                      "$ref" : "#/definitions/sslKeyStoreKeyContent"
+                    },
+                    "type" : {
+                      "const" : "PEM"
+                    }
+                  },
+                  "required" : [ "certContent", "keyContent" ]
+                } ],
+                "type" : "object",
+                "title" : "Key store"
+              },
+              "hostnameVerifier" : {
+                "$ref" : "#/definitions/sslTrustStoreHostnameVerifier"
+              },
+              "trustStore" : {
+                "oneOf" : [ {
+                  "type" : "object",
+                  "title" : "None",
+                  "properties" : {
+                    "type" : {
+                      "const" : ""
+                    }
+                  }
+                }, {
+                  "type" : "object",
+                  "title" : "JKS with path",
+                  "properties" : {
+                    "path" : {
+                      "$ref" : "#/definitions/sslTrustStorePath"
+                    },
+                    "password" : {
+                      "$ref" : "#/definitions/sslTrustStorePassword"
+                    },
+                    "type" : {
+                      "const" : "JKS"
+                    }
+                  },
+                  "required" : [ "password", "path" ]
+                }, {
+                  "type" : "object",
+                  "title" : "JKS with content",
+                  "properties" : {
+                    "password" : {
+                      "$ref" : "#/definitions/sslTrustStorePassword"
+                    },
+                    "type" : {
+                      "const" : "JKS"
+                    },
+                    "content" : {
+                      "$ref" : "#/definitions/sslTrustStoreContent"
+                    }
+                  },
+                  "required" : [ "password", "content" ]
+                }, {
+                  "type" : "object",
+                  "title" : "PKCS#12 / PFX with path",
+                  "properties" : {
+                    "path" : {
+                      "$ref" : "#/definitions/sslTrustStorePath"
+                    },
+                    "password" : {
+                      "$ref" : "#/definitions/sslTrustStorePassword"
+                    },
+                    "type" : {
+                      "const" : "PKCS12"
+                    }
+                  },
+                  "required" : [ "password", "path" ]
+                }, {
+                  "type" : "object",
+                  "title" : "PKCS#12 / PFX with content",
+                  "properties" : {
+                    "password" : {
+                      "$ref" : "#/definitions/sslTrustStorePassword"
+                    },
+                    "type" : {
+                      "const" : "PKCS12"
+                    },
+                    "content" : {
+                      "$ref" : "#/definitions/sslTrustStoreContent"
+                    }
+                  },
+                  "required" : [ "password", "content" ]
+                }, {
+                  "type" : "object",
+                  "title" : "PEM with path",
+                  "properties" : {
+                    "path" : {
+                      "$ref" : "#/definitions/sslTrustStorePath"
+                    },
+                    "password" : {
+                      "$ref" : "#/definitions/sslTrustStorePassword"
+                    },
+                    "type" : {
+                      "const" : "PEM"
+                    }
+                  },
+                  "required" : [ "password", "path" ]
+                }, {
+                  "type" : "object",
+                  "title" : "PEM with content",
+                  "properties" : {
+                    "password" : {
+                      "$ref" : "#/definitions/sslTrustStorePassword"
+                    },
+                    "type" : {
+                      "const" : "PEM"
+                    },
+                    "content" : {
+                      "$ref" : "#/definitions/sslTrustStoreContent"
+                    }
+                  },
+                  "required" : [ "password", "content" ]
+                } ],
+                "type" : "object",
+                "title" : "Truststore"
+              },
+              "trustAll" : {
+                "$ref" : "#/definitions/sslTrustStoreTrustAll"
+              }
+            }
+          },
+          "sslKeyStoreCertContent" : {
+            "format" : "text",
+            "type" : "string",
+            "title" : "Certificate"
+          },
+          "sslTrustStorePassword" : {
+            "gioConfig" : {
+              "banner" : {
+                "text" : "The password for the truststore file. If a password is not set, truststore file configured will still be used, but integrity checking is disabled. Truststore password is not supported for PEM format.",
+                "title" : "SSL truststore password"
+              }
+            },
+            "format" : "password",
+            "description" : "Truststore password",
+            "type" : "string",
+            "title" : "Password"
+          },
+          "sslKeyStoreKeyPassword" : {
+            "format" : "password",
+            "description" : "Password to use to access the key when protected by password",
+            "type" : "string",
+            "title" : "Key Password"
+          },
+          "followRedirects" : {
+            "default" : false,
+            "gioConfig" : {
+              "banner" : {
+                "text" : "When the connector receives a status code in the range 3xx from the backend, it follows the redirection provided by the Location response header.",
+                "title" : "Follow HTTP redirects"
+              }
+            },
+            "title" : "Follow HTTP redirects",
+            "type" : "boolean"
+          },
+          "sslKeyStoreAlias" : {
+            "description" : "Alias of the key to use in case the key store contains more than one key",
+            "type" : "string",
+            "title" : "Alias for the key"
+          },
+          "connectTimeout" : {
+            "default" : 3000,
+            "description" : "Maximum time to connect to the backend in milliseconds.",
+            "type" : "integer",
+            "title" : "Connect timeout (ms)"
+          },
+          "sslTrustStorePath" : {
+            "description" : "Path to the truststore file",
+            "type" : "string",
+            "title" : "Path to truststore"
+          },
+          "maxConcurrentConnections" : {
+            "default" : 20,
+            "description" : "Maximum pool size for connections.",
+            "type" : "integer",
+            "title" : "Max Concurrent Connections"
+          },
+          "headers" : {
+            "gioConfig" : {
+              "uiType" : "gio-headers-array"
+            },
+            "description" : "Default HTTP headers added or overridden by the API gateway to upstream",
+            "type" : "array",
+            "title" : "HTTP Headers",
+            "items" : {
+              "type" : "object",
+              "title" : "Header",
+              "properties" : {
+                "name" : {
+                  "type" : "string",
+                  "title" : "Name"
+                },
+                "value" : {
+                  "type" : "string",
+                  "title" : "Value"
+                }
+              },
+              "required" : [ "name", "value" ]
+            }
+          },
+          "keepAliveTimeout" : {
+            "default" : 30000,
+            "description" : "Maximum time a connection will remain unused in the pool in milliseconds. Once the timeout has elapsed, the unused connection will be evicted.",
+            "type" : "integer",
+            "title" : "Keep-alive timeout (ms)"
+          },
+          "keepAlive" : {
+            "default" : true,
+            "gioConfig" : {
+              "banner" : {
+                "text" : "Use an HTTP persistent connection to send and receive multiple HTTP requests / responses.",
+                "title" : "Enable keep-alive"
+              }
+            },
+            "title" : "Enable keep-alive",
+            "type" : "boolean"
+          },
+          "sslTrustStoreTrustAll" : {
+            "default" : false,
+            "description" : "Use this with caution (if over Internet). The gateway must trust any origin certificates. The connection will still be encrypted but this mode is vulnerable to 'man in the middle' attacks.",
+            "title" : "Trust all",
+            "type" : "boolean"
+          },
+          "http2MultiplexingLimit" : {
+            "default" : -1,
+            "gioConfig" : {
+              "banner" : {
+                "text" : "The maximum number of concurrent streams allowed for each HTTP/2 connection. The actual number of streams per connection is the minimum of this value and the server's initial settings. For example, if set to 10 and the server's initial setting is 1000, the max number of streams will be 10. If set to -1, the server's initial settings will be used. -1 is the default.",
+                "title" : "Max concurrent stream for an HTTP/2 connection"
+              }
+            },
+            "type" : "integer",
+            "title" : "Max concurrent stream for an HTTP/2 connection"
+          },
+          "propagateClientAcceptEncoding" : {
+            "gioConfig" : {
+              "banner" : {
+                "text" : "If the client request header includes a value for Accept-Encoding, the gateway will propagate it to the backend. The gateway will NEVER attempt to decompress the body content if the backend response is compressed (gzip, deflate). Therefore, transformation policies cannot be applied if the content body is compressed. If logging is enabled for the API, the compressed content body will be logged as is without any transformation applied. DO NOT activate this option if you plan to interact with body responses.",
+                "title" : "Propagate client Accept-Encoding header (no decompression if any)"
+              }
+            },
+            "description" : "Accept-Encoding can only be propagated if \"Enable compression\" is disabled.",
+            "title" : "Propagate client Accept-Encoding header",
+            "type" : "boolean"
+          },
+          "clearTextUpgrade" : {
+            "default" : true,
+            "gioConfig" : {
+              "banner" : {
+                "text" : "If enabled, an h2c connection is established using an HTTP/1.1 upgrade request. If disabled, h2c connection is established directly (with prior knowledge).",
+                "title" : "HTTP/2 Cleartext (H2C)"
+              }
+            },
+            "title" : "Allow h2c Clear Text Upgrade",
+            "type" : "boolean"
+          },
+          "sslKeyStorePassword" : {
+            "format" : "password",
+            "description" : "Password to use to open the key store",
+            "type" : "string",
+            "title" : "Password"
+          },
+          "proxy" : {
+            "oneOf" : [ {
+              "additionalProperties" : false,
+              "title" : "No proxy",
+              "properties" : {
+                "useSystemProxy" : {
+                  "const" : false
+                },
+                "enabled" : {
+                  "const" : false
+                }
+              }
+            }, {
+              "additionalProperties" : false,
+              "title" : "Use proxy configured at system level",
+              "properties" : {
+                "useSystemProxy" : {
+                  "const" : true
+                },
+                "enabled" : {
+                  "const" : true
+                }
+              }
+            }, {
+              "additionalProperties" : false,
+              "title" : "Use proxy for client connections",
+              "properties" : {
+                "password" : {
+                  "format" : "password",
+                  "description" : "Optional proxy password",
+                  "type" : "string",
+                  "title" : "Proxy password"
+                },
+                "port" : {
+                  "description" : "Proxy port to connect to",
+                  "type" : "integer",
+                  "title" : "Proxy port"
+                },
+                "host" : {
+                  "description" : "Proxy host to connect to",
+                  "type" : "string",
+                  "title" : "Proxy host"
+                },
+                "useSystemProxy" : {
+                  "const" : false
+                },
+                "type" : {
+                  "default" : "HTTP",
+                  "description" : "The type of the proxy",
+                  "type" : "string",
+                  "title" : "Proxy Type",
+                  "enum" : [ "HTTP", "SOCKS4", "SOCKS5" ]
+                },
+                "enabled" : {
+                  "const" : true
+                },
+                "username" : {
+                  "description" : "Optional proxy username",
+                  "type" : "string",
+                  "title" : "Proxy username"
+                }
+              },
+              "required" : [ "host", "port" ]
+            } ],
+            "type" : "object",
+            "title" : "Proxy Options"
+          },
+          "readTimeout" : {
+            "default" : 10000,
+            "description" : "Maximum time given to the backend to complete the request (including response) in milliseconds.",
+            "type" : "integer",
+            "title" : "Read timeout (ms)"
+          },
+          "idleTimeout" : {
+            "default" : 60000,
+            "gioConfig" : {
+              "banner" : {
+                "text" : "Maximum time a connection will be opened if no data is received nor sent. Once the timeout has elapsed, the unused connection will be closed, allowing to free the associated resources.",
+                "title" : "Idle timeout"
+              }
+            },
+            "type" : "integer",
+            "title" : "Idle timeout (ms)"
+          },
+          "sslTrustStoreContent" : {
+            "format" : "text",
+            "description" : "Binary content as Base64",
+            "type" : "string",
+            "title" : "Content"
+          },
+          "http" : {
+            "oneOf" : [ {
+              "additionalProperties" : false,
+              "title" : "HTTP 1.1",
+              "properties" : {
+                "keepAliveTimeout" : {
+                  "$ref" : "#/definitions/keepAliveTimeout"
+                },
+                "keepAlive" : {
+                  "$ref" : "#/definitions/keepAlive"
+                },
+                "followRedirects" : {
+                  "$ref" : "#/definitions/followRedirects"
+                },
+                "readTimeout" : {
+                  "$ref" : "#/definitions/readTimeout"
+                },
+                "idleTimeout" : {
+                  "$ref" : "#/definitions/idleTimeout"
+                },
+                "connectTimeout" : {
+                  "$ref" : "#/definitions/connectTimeout"
+                },
+                "propagateClientAcceptEncoding" : {
+                  "$ref" : "#/definitions/propagateClientAcceptEncoding"
+                },
+                "useCompression" : {
+                  "$ref" : "#/definitions/useCompression"
+                },
+                "maxConcurrentConnections" : {
+                  "$ref" : "#/definitions/maxConcurrentConnections"
+                },
+                "version" : {
+                  "const" : "HTTP_1_1"
+                },
+                "pipelining" : {
+                  "$ref" : "#/definitions/pipelining"
+                }
+              },
+              "required" : [ "connectTimeout", "readTimeout", "idleTimeout", "maxConcurrentConnections" ]
+            }, {
+              "additionalProperties" : false,
+              "title" : "HTTP 2",
+              "properties" : {
+                "keepAliveTimeout" : {
+                  "$ref" : "#/definitions/keepAliveTimeout"
+                },
+                "keepAlive" : {
+                  "$ref" : "#/definitions/keepAlive"
+                },
+                "http2MultiplexingLimit" : {
+                  "$ref" : "#/definitions/http2MultiplexingLimit"
+                },
+                "propagateClientAcceptEncoding" : {
+                  "$ref" : "#/definitions/propagateClientAcceptEncoding"
+                },
+                "useCompression" : {
+                  "$ref" : "#/definitions/useCompression"
+                },
+                "version" : {
+                  "const" : "HTTP_2"
+                },
+                "pipelining" : {
+                  "$ref" : "#/definitions/pipelining"
+                },
+                "clearTextUpgrade" : {
+                  "$ref" : "#/definitions/clearTextUpgrade"
+                },
+                "followRedirects" : {
+                  "$ref" : "#/definitions/followRedirects"
+                },
+                "readTimeout" : {
+                  "$ref" : "#/definitions/readTimeout"
+                },
+                "idleTimeout" : {
+                  "$ref" : "#/definitions/idleTimeout"
+                },
+                "connectTimeout" : {
+                  "$ref" : "#/definitions/connectTimeout"
+                },
+                "maxConcurrentConnections" : {
+                  "$ref" : "#/definitions/maxConcurrentConnections"
+                }
+              },
+              "required" : [ "connectTimeout", "readTimeout", "idleTimeout", "maxConcurrentConnections" ]
+            } ],
+            "type" : "object",
+            "title" : "Security configuration"
+          },
+          "sslKeyStoreCertPath" : {
+            "description" : "Path to cert file (.PEM)",
+            "type" : "string",
+            "title" : "Path to cert file"
+          }
+        },
+        "properties" : {
+          "headers" : {
+            "$ref" : "#/definitions/headers"
+          },
+          "proxy" : {
+            "$ref" : "#/definitions/proxy"
+          },
+          "http" : {
+            "$ref" : "#/definitions/http"
+          },
+          "ssl" : {
+            "$ref" : "#/definitions/ssl"
+          }
+        }
+      },
+      "endpoints" : [ {
+        "name" : "default",
+        "type" : "http-proxy",
+        "weight" : 1,
+        "inheritConfiguration" : true,
+        "configuration" : {
+          "target" : "http://camara.numberverification:9091/number-verification/v1"
+        },
+        "sharedConfigurationOverride" : { },
+        "services" : { },
+        "secondary" : false
+      } ],
+      "services" : { }
+    } ],
+    "analytics" : {
+      "enabled" : true,
+      "logging" : {
+        "content" : {
+          "headers" : true,
+          "messageHeaders" : false,
+          "payload" : true,
+          "messagePayload" : false,
+          "messageMetadata" : false
+        },
+        "phase" : {
+          "request" : true,
+          "response" : true
+        },
+        "mode" : {
+          "endpoint" : true,
+          "entrypoint" : true
+        }
+      }
+    },
+    "flowExecution" : {
+      "mode" : "DEFAULT",
+      "matchRequired" : false
+    },
+    "flows" : [ {
+      "id" : "0e98c029-d924-49d6-98c0-29d924c9d61d",
+      "name" : "",
+      "enabled" : true,
+      "selectors" : [ {
+        "type" : "CONDITION",
+        "condition" : ""
+      }, {
+        "type" : "HTTP",
+        "path" : "/verify",
+        "pathOperator" : "EQUALS",
+        "methods" : [ "POST" ]
+      } ],
+      "request" : [ ],
+      "response" : [ ],
+      "subscribe" : [ ],
+      "publish" : [ ]
+    }, {
+      "id" : "807c5199-8cf1-4795-bc51-998cf1c795f5",
+      "name" : "",
+      "enabled" : true,
+      "selectors" : [ {
+        "type" : "CONDITION",
+        "condition" : ""
+      }, {
+        "type" : "HTTP",
+        "path" : "/device-phone-number",
+        "pathOperator" : "EQUALS",
+        "methods" : [ "GET" ]
+      } ],
+      "request" : [ ],
+      "response" : [ ],
+      "subscribe" : [ ],
+      "publish" : [ ]
+    } ],
+    "id" : "e959c047-c7ea-4f54-99c0-47c7eacf543e",
+    "name" : "Number Verification",
+    "description" : "Service Enabling Network Function API to verify that the provided **mobile phone number** is the one used in the device. It verifies that the user is using a device with the same *mobile phone number* as it is declared.\nIt also makes it possible for a Service provider to verify the number itself by returning the phone number associated to the authenticated user's access token.\n\nIn this API **phone number** term refers to the mobile phone number.\n\n# Introduction\n\nNumber Verification API performs real-time checks to verify the phone number of the mobile device being used to access a service provider (SP) service, where the mobile device is accessing the *service provider* over a mobile network (WiFi connections are out of this API scope) either by getting the comparison result or receiving the phone number of the device that it is used, so they can verify it themselves.\n\nIt uses direct mobile network connections to verify possession of a phone number in the background without requiring user interaction. There are neither OTPs (One-time passwords) received by SMS nor authenticator app downloads, so it is much simpler. It can be used at sign up, login, or transaction time to validate that a user's SIM (Subscriber Identity Module) is both actively connected to the mobile network and not spoofed or cloned.\n\n\n# Relevant Definitions and Concepts\n\n- **Network-Based Authentication**: Authentication mechanism based on the identification of the endpoint of a network connection. Network operators know to which subscriber a network resource is assigned at a given moment, for example the mobile phone number associated to a specific mobile network connection.\n\n# API Functionality\n\nThis enables a Service Provider (SP) to verify the phone number of the mobile device being used to access their service where the mobile device is accessing the *service provider* over a mobile network (WiFi connections are out of this API scope). This can happen either by getting the comparison result or receiving the phone number of the device that is used, so they can verify it themselves.\n\n# Resources and Operations overview\nThis API currently provides two endpoints where both require a **3-legged token** and authentication via **mobile network** (**excluding** for example by SMS/OTP or user/password as an authentication method):\n- The first one checks if the user mobile phone number matches the phone number associated with the mobile device. It can receive either a hashed or a plain text phone number as input and it compares the received input with the authenticated user's phone number associated to the access token in order to respond **true/false**.\n- The next one retrieves the phone number associated to the user's token and returns it so the verification can be made by the service provider.\n\n# Sequence Diagram\nNumber Verification API uses the **standard [OIDC Authorization Code Flow](https://openid.net/specs/openid-connect-core-1_0.html#CodeFlowAuth)**. The following diagram will help to clarify the end-to-end process, including previous steps prior to this API call.\n\nNote that the diagram shows just an example of a direct integration from developer's application and MNO's authserver and API, other scenarios of indirect integration via Aggregator/Channel Partner should also be considered. Specific authorization flows may apply, as defined by e.g. GSMA Open Gateway (OGW).\n\n![UML Sequence Diagram](https://raw.githubusercontent.com/camaraproject/NumberVerification/main/documentation/API_documentation/assets/uml_v0.3.jpg)\n\n**Additional details:**\n\n- **(1):** Authentication must be automatic without any user interactions. Authentication methods such as SMS OTP or user/password are incompatible, as the goal is to validate the mobile phone number that is accessing the App. So it is required to be authentication via mobile network and without the user being involved. the use of parameter prompt=none, as described in **[OIDC Connect](https://openid.net/specs/openid-connect-core-1_0.html#AuthRequest)**, ensures no user interaction.\n\n- **(2):** The way in which the phone_number is retrieved depends on the implementation. For example, access token may be a self contained encrypted JWT, so API can decrypt and identify phone_number. Some other implementations might request the phone_number associated to the token from Authserver.\n\n# Authorization and authentication\n\nThe \"Camara Security and Interoperability Profile\" provides details on how a client requests an access token. Please refer to Identify and Consent Management (https://github.com/camaraproject/IdentityAndConsentManagement/) for the released version of the Profile.\n\nWhich specific authorization flows are to be used will be determined during onboarding process, happening between the API Client and the Telco Operator exposing the API, taking into account the declared purpose for accessing the API, while also being subject to the prevailing legal framework dictated by local legislation.\n\nIt is important to remark that in cases where personal user data is processed by the API, and users can exercise their rights through mechanisms such as opt-in and/or opt-out, the use of 3-legged access tokens becomes mandatory. This measure ensures that the API remains in strict compliance with user privacy preferences and regulatory obligations, upholding the principles of transparency and user-centric data control.\n\nIn the case of the Number Verification API scenario and according to the API definition, 3-legged access tokens must be used by API clients to invoke this API with dedicated scope. The API client must authenticate on behalf of a specific user to use this service. This must be done via mobile network authentication.\n\n# Further info and support\n[GSMA Mobile Connect Verified MSISDN specification](https://www.gsma.com/identity/wp-content/uploads/2022/12/IDY.54-Mobile-Connect-Verified-MSISDN-Definition-and-Technical-Requirements-1.0.pdf) was used as source of input for this API.  For more about Mobile Connect, please see [Mobile Connect website](https://mobileconnect.io/).",
+    "apiVersion" : "1.0.0",
+    "deployedAt" : "2025-02-18T14:02:14.836Z",
+    "createdAt" : "2025-02-18T13:51:28.042Z",
+    "updatedAt" : "2025-02-18T14:02:14.836Z",
+    "disableMembershipNotifications" : false,
+    "groups" : [ ],
+    "state" : "STARTED",
+    "visibility" : "PUBLIC",
+    "lifecycleState" : "PUBLISHED",
+    "tags" : [ ],
+    "primaryOwner" : {
+      "id" : "d9248181-7702-4091-a481-81770260910b",
+      "displayName" : "admin",
+      "type" : "USER"
+    },
+    "originContext" : {
+      "origin" : "MANAGEMENT"
+    },
+    "responseTemplates" : { },
+    "resources" : [ ],
+    "properties" : [ ]
+  },
+  "members" : [ {
+    "id" : "cfc0e4ee-d1ea-451f-80e4-eed1ea551f34",
+    "displayName" : "user",
+    "roles" : [ {
+      "name" : "USER",
+      "scope" : "API"
+    } ]
+  }, {
+    "id" : "d9248181-7702-4091-a481-81770260910b",
+    "displayName" : "admin",
+    "roles" : [ {
+      "name" : "PRIMARY_OWNER",
+      "scope" : "API"
+    } ]
+  } ],
+  "metadata" : [ {
+    "key" : "email-support",
+    "name" : "email-support",
+    "format" : "MAIL",
+    "value" : "${(api.primaryOwner.email)!''}",
+    "defaultValue" : "support@change.me"
+  } ],
+  "pages" : [ {
+    "id" : "b9c46da3-dd69-4e36-846d-a3dd699e36c6",
+    "name" : "Swagger",
+    "type" : "SWAGGER",
+    "content" : "openapi: 3.0.3\r\ninfo:\r\n  title: Number Verification\r\n  description: |\r\n    Service Enabling Network Function API to verify that the provided **mobile phone number** is the one used in the device. It verifies that the user is using a device with the same *mobile phone number* as it is declared.\r\n    It also makes it possible for a Service provider to verify the number itself by returning the phone number associated to the authenticated user's access token.\r\n\r\n    In this API **phone number** term refers to the mobile phone number.\r\n\r\n    # Introduction\r\n\r\n    Number Verification API performs real-time checks to verify the phone number of the mobile device being used to access a service provider (SP) service, where the mobile device is accessing the *service provider* over a mobile network (WiFi connections are out of this API scope) either by getting the comparison result or receiving the phone number of the device that it is used, so they can verify it themselves.\r\n\r\n    It uses direct mobile network connections to verify possession of a phone number in the background without requiring user interaction. There are neither OTPs (One-time passwords) received by SMS nor authenticator app downloads, so it is much simpler. It can be used at sign up, login, or transaction time to validate that a user's SIM (Subscriber Identity Module) is both actively connected to the mobile network and not spoofed or cloned.\r\n\r\n\r\n    # Relevant Definitions and Concepts\r\n\r\n    - **Network-Based Authentication**: Authentication mechanism based on the identification of the endpoint of a network connection. Network operators know to which subscriber a network resource is assigned at a given moment, for example the mobile phone number associated to a specific mobile network connection.\r\n\r\n    # API Functionality\r\n\r\n    This enables a Service Provider (SP) to verify the phone number of the mobile device being used to access their service where the mobile device is accessing the *service provider* over a mobile network (WiFi connections are out of this API scope). This can happen either by getting the comparison result or receiving the phone number of the device that is used, so they can verify it themselves.\r\n\r\n    # Resources and Operations overview\r\n    This API currently provides two endpoints where both require a **3-legged token** and authentication via **mobile network** (**excluding** for example by SMS/OTP or user/password as an authentication method):\r\n    - The first one checks if the user mobile phone number matches the phone number associated with the mobile device. It can receive either a hashed or a plain text phone number as input and it compares the received input with the authenticated user's phone number associated to the access token in order to respond **true/false**.\r\n    - The next one retrieves the phone number associated to the user's token and returns it so the verification can be made by the service provider.\r\n\r\n    # Sequence Diagram\r\n    Number Verification API uses the **standard [OIDC Authorization Code Flow](https://openid.net/specs/openid-connect-core-1_0.html#CodeFlowAuth)**. The following diagram will help to clarify the end-to-end process, including previous steps prior to this API call.\r\n\r\n    Note that the diagram shows just an example of a direct integration from developer's application and MNO's authserver and API, other scenarios of indirect integration via Aggregator/Channel Partner should also be considered. Specific authorization flows may apply, as defined by e.g. GSMA Open Gateway (OGW).\r\n\r\n    ![UML Sequence Diagram](https://raw.githubusercontent.com/camaraproject/NumberVerification/main/documentation/API_documentation/assets/uml_v0.3.jpg)\r\n\r\n    **Additional details:**\r\n\r\n    - **(1):** Authentication must be automatic without any user interactions. Authentication methods such as SMS OTP or user/password are incompatible, as the goal is to validate the mobile phone number that is accessing the App. So it is required to be authentication via mobile network and without the user being involved. the use of parameter prompt=none, as described in **[OIDC Connect](https://openid.net/specs/openid-connect-core-1_0.html#AuthRequest)**, ensures no user interaction.\r\n\r\n    - **(2):** The way in which the phone_number is retrieved depends on the implementation. For example, access token may be a self contained encrypted JWT, so API can decrypt and identify phone_number. Some other implementations might request the phone_number associated to the token from Authserver.\r\n\r\n    # Authorization and authentication\r\n\r\n    The \"Camara Security and Interoperability Profile\" provides details on how a client requests an access token. Please refer to Identify and Consent Management (https://github.com/camaraproject/IdentityAndConsentManagement/) for the released version of the Profile.\r\n\r\n    Which specific authorization flows are to be used will be determined during onboarding process, happening between the API Client and the Telco Operator exposing the API, taking into account the declared purpose for accessing the API, while also being subject to the prevailing legal framework dictated by local legislation.\r\n\r\n    It is important to remark that in cases where personal user data is processed by the API, and users can exercise their rights through mechanisms such as opt-in and/or opt-out, the use of 3-legged access tokens becomes mandatory. This measure ensures that the API remains in strict compliance with user privacy preferences and regulatory obligations, upholding the principles of transparency and user-centric data control.\r\n\r\n    In the case of the Number Verification API scenario and according to the API definition, 3-legged access tokens must be used by API clients to invoke this API with dedicated scope. The API client must authenticate on behalf of a specific user to use this service. This must be done via mobile network authentication.\r\n\r\n    # Further info and support\r\n    [GSMA Mobile Connect Verified MSISDN specification](https://www.gsma.com/identity/wp-content/uploads/2022/12/IDY.54-Mobile-Connect-Verified-MSISDN-Definition-and-Technical-Requirements-1.0.pdf) was used as source of input for this API.  For more about Mobile Connect, please see [Mobile Connect website](https://mobileconnect.io/).\r\n  version: 1.0.0\r\n  x-camara-commonalities: 0.4.0\r\n  license:\r\n    name: Apache 2.0\r\n    url: https://www.apache.org/licenses/LICENSE-2.0.html\r\nservers:\r\n  - url: '{apiRoot}/number-verification/v1'\r\n    variables:\r\n      apiRoot:\r\n        default: http://localhost:9091\r\n        description: API root, defined by the service provider, e.g. `api.example.com` or `api.example.com/somepath\r\ntags:\r\n  - name: Phone number verify\r\n    description: API operation to verify a phone number received as input. It can be received either in plain text or hashed format.\r\n  - name: Phone number share\r\n    description: API operation to return the phone number associated to the access token.\r\npaths:\r\n  /verify:\r\n    post:\r\n      tags:\r\n        - Phone number verify\r\n      summary: Verifies if the received hashed/plain text phone number matches the phone number associated with the access token\r\n      description: |\r\n        Verifies if the specified phone number (either in plain text or hashed format) matches the one that the user is currently using. Only one of the plain or hashed formats must be provided.\r\n        - The number verification will be done for the user that has authenticated via mobile network\r\n        - It returns true/false depending on if the hashed phone number received as input matches the authenticated user's `device phone number` associated to the access token\r\n      operationId: phoneNumberVerify\r\n      parameters:\r\n        - in: header\r\n          name: x-correlator\r\n          required: false\r\n          description: Correlation id for the different services\r\n          schema:\r\n            type: string\r\n      requestBody:\r\n        content:\r\n          application/json:\r\n            schema:\r\n              $ref: '#/components/schemas/NumberVerificationRequestBody'\r\n        required: true\r\n      responses:\r\n        '200':\r\n          description: OK\r\n          headers:\r\n            x-correlator:\r\n              description: Correlation id for the different services\r\n              schema:\r\n                type: string\r\n          content:\r\n            application/json:\r\n              schema:\r\n                $ref: '#/components/schemas/NumberVerificationMatchResponse'\r\n        '400':\r\n          $ref: '#/components/responses/Generic400'\r\n        '401':\r\n          $ref: '#/components/responses/Generic401'\r\n        '403':\r\n          $ref: '#/components/responses/PhoneNumberVerificationPermissionDenied403'\r\n        '500':\r\n          $ref: '#/components/responses/Generic500'\r\n        '503':\r\n          $ref: '#/components/responses/Generic503'\r\n        '504':\r\n          $ref: '#/components/responses/Generic504'\r\n      security:\r\n        - openId:\r\n            - number-verification:verify\r\n  /device-phone-number:\r\n    get:\r\n      tags:\r\n        - Phone number share\r\n      summary: Returns the phone number associated with the access token\r\n      description: |\r\n        Returns the phone number so the API clients can verify the number themselves:\r\n        - It will be done for the user that has authenticated via mobile network\r\n        - It returns the authenticated user's `device phone number` associated to the access token\r\n      operationId: phoneNumberShare\r\n      parameters:\r\n        - in: header\r\n          name: x-correlator\r\n          required: false\r\n          description: Correlation id for the different services\r\n          schema:\r\n            type: string\r\n      responses:\r\n        '200':\r\n          description: OK\r\n          headers:\r\n            x-correlator:\r\n              description: Correlation id for the different services\r\n              schema:\r\n                type: string\r\n          content:\r\n            application/json:\r\n              schema:\r\n                $ref: '#/components/schemas/NumberVerificationShareResponse'\r\n        '400':\r\n          $ref: '#/components/responses/Generic400'\r\n        '401':\r\n          $ref: '#/components/responses/Generic401'\r\n        '403':\r\n          $ref: '#/components/responses/PhoneNumberVerificationPermissionDenied403'\r\n        '500':\r\n          $ref: '#/components/responses/Generic500'\r\n        '503':\r\n          $ref: '#/components/responses/Generic503'\r\n        '504':\r\n          $ref: '#/components/responses/Generic504'\r\n      security:\r\n        - openId:\r\n            - number-verification:device-phone-number:read\r\ncomponents:\r\n  securitySchemes:\r\n    openId:\r\n      type: openIdConnect\r\n      openIdConnectUrl: https://example.com/.well-known/openid-configuration\r\n  headers:\r\n    x-correlator:\r\n      description: Correlation id for the different services\r\n      schema:\r\n        type: string\r\n  schemas:\r\n    NumberVerificationRequestBody:\r\n      type: object\r\n      description: Payload to verify the phone number.\r\n      minProperties: 1\r\n      maxProperties: 1\r\n      properties:\r\n        phoneNumber:\r\n          type: string\r\n          pattern: '^\\+[1-9][0-9]{4,14}$'\r\n          example: '+123456789'\r\n          description: A public identifier addressing a telephone subscription. In mobile networks it corresponds to the MSISDN (Mobile Station International Subscriber Directory Number). In order to be globally unique it has to be formatted in international format, according to E.164 standard, prefixed with '+'.\r\n        hashedPhoneNumber:\r\n          description: Hashed phone number. SHA-256 (in hexadecimal representation) of the mobile phone number in **E.164 format (starting with country code)**. Prefixed with '+'.\r\n          type: string\r\n          example: 32f67ab4e4312618b09cd23ed8ce41b13e095fe52b73b2e8da8ef49830e50dba\r\n    NumberVerificationMatchResponse:\r\n      type: object\r\n      description: Number verification result\r\n      required:\r\n        - devicePhoneNumberVerified\r\n      properties:\r\n        devicePhoneNumberVerified:\r\n          $ref: '#/components/schemas/DevicePhoneNumberVerified'\r\n    NumberVerificationShareResponse:\r\n      type: object\r\n      description: Number verification share result\r\n      required:\r\n        - devicePhoneNumber\r\n      properties:\r\n        devicePhoneNumber:\r\n          $ref: '#/components/schemas/DevicePhoneNumber'\r\n    DevicePhoneNumber:\r\n      type: string\r\n      pattern: '^\\+[1-9][0-9]{4,14}$'\r\n      example: '+123456789'\r\n      description: A public identifier addressing a telephone subscription. In mobile networks it corresponds to the MSISDN (Mobile Station International Subscriber Directory Number). In order to be globally unique it has to be formatted in international format, according to E.164 standard, prefixed with '+'.\r\n    DevicePhoneNumberVerified:\r\n      description: Number verification. True, if it matches\r\n      type: boolean\r\n    ErrorInfo:\r\n      type: object\r\n      required:\r\n        - status\r\n        - code\r\n        - message\r\n      properties:\r\n        status:\r\n          type: integer\r\n          description: HTTP response status code\r\n        code:\r\n          type: string\r\n          description: Code given to this error\r\n        message:\r\n          type: string\r\n          description: Detailed error description\r\n  responses:\r\n    Generic400:\r\n      description: Problem with the client request\r\n      headers:\r\n        x-correlator:\r\n          $ref: \"#/components/headers/x-correlator\"\r\n      content:\r\n        application/json:\r\n          schema:\r\n            $ref: '#/components/schemas/ErrorInfo'\r\n          example:\r\n            status: 400\r\n            code: INVALID_ARGUMENT\r\n            message: Client specified an invalid argument, request body or query param\r\n    Generic401:\r\n      description: Unauthorized\r\n      headers:\r\n        x-correlator:\r\n          $ref: \"#/components/headers/x-correlator\"\r\n      content:\r\n        application/json:\r\n          schema:\r\n            $ref: '#/components/schemas/ErrorInfo'\r\n          examples:\r\n            GENERIC_401_UNAUTHENTICATED:\r\n              description: Request cannot be authenticated\r\n              value:\r\n                status: 401\r\n                code: UNAUTHENTICATED\r\n                message: Request not authenticated due to missing, invalid, or expired credentials.\r\n            GENERIC_401_AUTHENTICATION_REQUIRED:\r\n              description: New authentication is needed, authentication is no longer valid\r\n              value:\r\n                status: 401\r\n                code: AUTHENTICATION_REQUIRED\r\n                message: New authentication is required.\r\n    PhoneNumberVerificationPermissionDenied403:\r\n      description: |\r\n        Client does not have sufficient permission.\r\n        In addition to regular scenario of `PERMISSION_DENIED`, other scenarios may exist:\r\n          - Client authentication was not via mobile network. In order to check the authentication method, AMR parameter value in the 3-legged user's access token can be used and make sure that the authentication was not either by SMS+OTP nor username/password (`{\"code\": \"NUMBER_VERIFICATION.USER_NOT_AUTHENTICATED_BY_MOBILE_NETWORK\",\"message\": \"Client must authenticate via the mobile network to use this service\"}`)\r\n          - Phone number cannot be deducted from access token context.(`{\"code\": \"INVALID_TOKEN_CONTEXT\",\"message\": \"Phone number cannot be deducted from access token context\"}`)\r\n      headers:\r\n        x-correlator:\r\n          $ref: \"#/components/headers/x-correlator\"\r\n      content:\r\n        application/json:\r\n          schema:\r\n            $ref: '#/components/schemas/ErrorInfo'\r\n          examples:\r\n            GENERIC_403_PERMISSION_DENIED:\r\n              description: Permission denied. OAuth2 token access does not have the required scope or when the user fails operational security\r\n              value:\r\n                status: 403\r\n                code: PERMISSION_DENIED\r\n                message: Client does not have sufficient permissions to perform this action.\r\n            GENERIC_403_USER_NOT_AUTHENTICATED_BY_MOBILE_NETWORK:\r\n              value:\r\n                status: 403\r\n                code: NUMBER_VERIFICATION.USER_NOT_AUTHENTICATED_BY_MOBILE_NETWORK\r\n                message: Client must authenticate via the mobile network to use this service\r\n            GENERIC_403_INVALID_TOKEN_CONTEXT:\r\n              value:\r\n                status: 403\r\n                code: INVALID_TOKEN_CONTEXT\r\n                message: Phone number cannot be deducted from access token context\r\n    Generic500:\r\n      description: Server error\r\n      headers:\r\n        x-correlator:\r\n          $ref: \"#/components/headers/x-correlator\"\r\n      content:\r\n        application/json:\r\n          schema:\r\n            $ref: '#/components/schemas/ErrorInfo'\r\n          example:\r\n            status: 500\r\n            code: INTERNAL\r\n            message: Server error\r\n    Generic503:\r\n      description: Service unavailable. Typically the server is down.\r\n      headers:\r\n        x-correlator:\r\n          $ref: \"#/components/headers/x-correlator\"\r\n      content:\r\n        application/json:\r\n          schema:\r\n            $ref: '#/components/schemas/ErrorInfo'\r\n          example:\r\n            status: 503\r\n            code: UNAVAILABLE\r\n            message: Service unavailable\r\n    Generic504:\r\n      description: Request time exceeded. If it happens repeatedly, consider reducing the request complexity\r\n      headers:\r\n        x-correlator:\r\n          $ref: \"#/components/headers/x-correlator\"\r\n      content:\r\n        application/json:\r\n          schema:\r\n            $ref: '#/components/schemas/ErrorInfo'\r\n          example:\r\n            status: 504\r\n            code: TIMEOUT\r\n            message: Request timeout exceeded. Try later.\r\nexternalDocs:\r\n  description: Project documentation at CAMARA\r\n  url: https://github.com/camaraproject/NumberVerification\r\n",
+    "order" : 0,
+    "published" : true,
+    "visibility" : "PUBLIC",
+    "updatedAt" : "2025-02-18T13:51:28.511Z",
+    "contentType" : "text/yaml",
+    "homepage" : false,
+    "parentPath" : "",
+    "excludedAccessControls" : false,
+    "accessControls" : [ ]
+  } ],
+  "plans" : [ {
+    "definitionVersion" : "V4",
+    "flows" : [ {
+      "id" : "0d6deb6b-d668-488e-adeb-6bd668c88e81",
+      "enabled" : true,
+      "selectors" : [ {
+        "type" : "HTTP",
+        "path" : "/",
+        "pathOperator" : "STARTS_WITH"
+      } ],
+      "request" : [ ],
+      "response" : [ ],
+      "subscribe" : [ ],
+      "publish" : [ ]
+    } ],
+    "id" : "d9244b0a-446d-4f61-a44b-0a446daf61a3",
+    "name" : "Free plan",
+    "description" : "",
+    "apiId" : "e959c047-c7ea-4f54-99c0-47c7eacf543e",
+    "security" : {
+      "type" : "KEY_LESS",
+      "configuration" : { }
+    },
+    "mode" : "STANDARD",
+    "characteristics" : [ ],
+    "commentMessage" : "",
+    "commentRequired" : false,
+    "createdAt" : "2025-02-18T13:54:55.069Z",
+    "excludedGroups" : [ ],
+    "generalConditions" : "",
+    "order" : 1,
+    "publishedAt" : "2025-02-18T13:54:59.194Z",
+    "status" : "PUBLISHED",
+    "tags" : [ ],
+    "type" : "API",
+    "updatedAt" : "2025-02-18T13:54:59.194Z",
+    "validation" : "MANUAL"
+  } ],
+  "apiMedia" : [ ]
+}

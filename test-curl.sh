@@ -43,3 +43,13 @@ $ curl -X POST \
 }
 CORP+a925880@DESKTOP-420EK6A MINGW64 /
 $
+
+
+curl -X 'POST' \
+  'http://localhost:8000/number-verification/v1/verify' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "phoneNumber": "+123456789",
+  "hashedPhoneNumber": "32f67ab4e4312618b09cd23ed8ce41b13e095fe52b73b2e8da8ef49830e50dba"
+}'

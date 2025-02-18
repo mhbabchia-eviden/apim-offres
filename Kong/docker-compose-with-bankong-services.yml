@@ -195,6 +195,18 @@ services:
     ports:
     - 7654:80
     image: kennethreitz/httpbin:latest
+
+#camara API (Mock API)
+
+  numberverification:
+    container_name: numberverification
+    hostname: camara.numberverification
+    networks:
+    - kong-net
+    - graviteeamnet
+    ports:
+    - 7653:9091
+    image: camara/numberverification:v1  
       
 
 secrets:

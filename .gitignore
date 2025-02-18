@@ -11,3 +11,4 @@ wiredTiger
 *.lock
 .vscode
 *._PASSWORD
+Kong/POSTGRES_PASSWORD
