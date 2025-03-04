@@ -1,0 +1,26 @@
+name: Apply spectral lint to validate API Spec
+
+on:
+  push:
+    branches:
+      - features/test
+
+jobs:
+  apic-validate-api:
+    runs-on: ubuntu-latest
+    name: validate API
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: setup Node
+      uses: actions/setup-node@v4
+      with:
+        node-version: 18
+    - run : npm help
+    
+    - name: install spectral 
+      run: npm install -g @stoplight/spectral-cli
+
+    - name: validate gravitee API with ruleset
+      continue-on-error: true 
+      run:  spectral lint gravitee/api/* --ruleset scripts/src/*

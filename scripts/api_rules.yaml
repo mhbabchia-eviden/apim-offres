@@ -1,0 +1,86 @@
+# Rules can have the following properties:
+
+#given (required): The part of the document the rule should be applied to. Uses the JSONPath syntax.
+#then (required): Describes which function should be applied to the given part of the document. Can be used with a core function or custom function.
+#description (optional): A short description of the rule.
+#message (optional): A message that's displayed in the spectral lint output. Can be customized to use placeholder values that are evaluated at runtime, 
+#such as {{description}} or {{error}}.
+#severity (optional): The severity of the rule. Used to differentiate between rules that must be followed (error) and warnings or hints. Default value is warn.
+
+#formats (optional): The format that the rule should apply to. For example oas3 for any OpenAPI v3.x descriptions. Can be applied at the ruleset and/or rule level. 
+#See Formats for more details.
+
+#recommended (optional): Use recommended when extending a ruleset so users can enforce all rules (recommended set to false) or only recommended rules (recommended set to true). 
+# Recommended can be used to slowly roll out a ruleset across API landscapes with a lot of legacy APIs. Default value is true. See Recommended for more details.
+#resolved (optional): Used to apply a rule to a document that's not "resolved," where $ref JSON Schema references haven't been replaced with the objects they point to.
+
+formats: [oas2,oas3]
+
+documentationUrl: https://www.example.com/docs/api-style-guide.md
+
+extends: [[spectral:oas, all]]
+
+rules:
+  api-rule-existe-path-healthcheck:
+    description: Verifier l'existance d'un path healthcheck
+    message: "Les API doivent avoir un (`/health`) défini."
+    formats: [oas2,oas3]
+    given:
+      - $.paths
+    severity: error
+    then:
+       function: truthy
+       field: "/health"
+  
+
+  api-rule-no-file-extensions-in-paths:
+     message: "Paths  ne doivent pas inclure d'extensions de fichier telles que .json, .xml, .html et .txt."
+     description: "Paths ne doivent pas inclure d'extensions de fichier telles que « .json », « .xml », « .html » et « .txt ». Utilisez le mot-clé OpenAPI `content` pour indiquer aux consommateurs quels types de médias sont disponibles."
+     formats: [oas2,oas3]
+     given: "$.paths[*]~"
+     severity: error
+     then:
+       - function: pattern
+         functionOptions:
+           notMatch: ".(json|xml|html|txt)$"
+
+  api-rule-tags:
+    description: Tags must have a description.
+    given: $.tags[*]
+    severity: error
+    then:
+      field: description
+      function: truthy
+  
+  api-rule-request-no-PATCH:
+    description: "No PATCH requests permitted"
+    severity: error
+    given: $.paths.*.[patch]
+    then:
+      function: falsy
+  
+  api-rule-request-GET-no-body:
+    description: "A 'GET' request MUST NOT accept a 'body` parameter"
+    severity: error
+    given: $.paths..get.parameters..in
+    then:
+      function: pattern
+      functionOptions:
+        notMatch: "/^body$/"
+
+  api-rule-security-enabled:
+    description: "keyAuth security Scheme Required"
+    severity: error
+    given: $.components.securitySchemes[*]
+    then:
+      function: truthy
+
+  api-rule-resp-code-as-num:
+    description: Response codes should be a number i.e. not string
+    severity: warn
+    given: "$....responses"
+    then:
+      field: "@key"
+      function: pattern
+      functionOptions:
+        match: "^[0-9]+$"

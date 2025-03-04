@@ -1,0 +1,35 @@
+# Rules can have the following properties:
+
+#given (required): The part of the document the rule should be applied to. Uses the JSONPath syntax.
+#then (required): Describes which function should be applied to the given part of the document. Can be used with a core function or custom function.
+#description (optional): A short description of the rule.
+#message (optional): A message that's displayed in the spectral lint output. Can be customized to use placeholder values that are evaluated at runtime, 
+#such as {{description}} or {{error}}.
+#severity (optional): The severity of the rule. Used to differentiate between rules that must be followed (error) and warnings or hints. Default value is warn.
+
+#formats (optional): The format that the rule should apply to. For example oas3 for any OpenAPI v3.x descriptions. Can be applied at the ruleset and/or rule level. 
+#See Formats for more details.
+
+#recommended (optional): Use recommended when extending a ruleset so users can enforce all rules (recommended set to false) or only recommended rules (recommended set to true). 
+# Recommended can be used to slowly roll out a ruleset across API landscapes with a lot of legacy APIs. Default value is true. See Recommended for more details.
+#resolved (optional): Used to apply a rule to a document that's not "resolved," where $ref JSON Schema references haven't been replaced with the objects they point to.
+
+
+rules:
+  api-rule-security-enabled:
+    description: "keyAuth security Scheme Required"
+    severity: error
+    given: $.components.securitySchemes[*]
+    then:
+      function: truthy
+
+  api-rule-security-key-auth:
+    description: "Consider a more secure alternative to API Key Auth."
+    message: "API Key Auth is being phased out , please consider moving to OAuth2."
+    severity: warning
+    given: $.components.securitySchemes
+    then:
+      field: type
+      function: pattern
+      functionOptions:
+        notMatch: "apiKey"
