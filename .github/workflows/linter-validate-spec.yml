@@ -21,10 +21,6 @@ jobs:
     - name: install spectral 
       run: npm install -g @stoplight/spectral-cli
 
-    - name: validate gravitee APIs with ruleset
-      continue-on-error: true 
-      run:  spectral lint gravitee/api/* --ruleset scripts/*
-
     - name: validate APIConnect IBM APIs with ruleset
       continue-on-error: true 
-      run:  spectral lint gravitee/api/* --ruleset scripts/*  
+      run:  spectral lint APIConnect_IBM/api/* --ruleset scripts/*  
