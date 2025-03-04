@@ -23,8 +23,8 @@ jobs:
 
     - name: validate gravitee APIs with ruleset
       continue-on-error: true 
-      run:  spectral lint gravitee/api/* --ruleset scripts/src/*
+      run:  spectral lint gravitee/api/* --ruleset scripts/*
 
     - name: validate APIConnect IBM APIs with ruleset
       continue-on-error: true 
-      run:  spectral lint gravitee/api/* --ruleset scripts/src/*  
+      run:  spectral lint gravitee/api/* --ruleset scripts/*  
