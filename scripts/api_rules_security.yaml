@@ -14,7 +14,7 @@
 # Recommended can be used to slowly roll out a ruleset across API landscapes with a lot of legacy APIs. Default value is true. See Recommended for more details.
 #resolved (optional): Used to apply a rule to a document that's not "resolved," where $ref JSON Schema references haven't been replaced with the objects they point to.
 
-
+formats: [oas2,oas3]
 rules:
   api-rule-security-enabled:
     description: "keyAuth security Scheme Required"
