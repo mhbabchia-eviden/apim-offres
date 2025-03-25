@@ -1,0 +1,33 @@
+#camara API (Mock API)
+
+  numberverification:
+    container_name: numberverification
+    hostname: camara.numberverification
+    networks:
+    - kong-net
+    - graviteeamnet
+    ports:
+    - 7653:9091
+    image: camara/numberverification:v1
+    
+  
+  sim-swap:
+    container_name: sim-swap
+    hostname: camara.sim-swap
+    networks:
+    - kong-net
+    - graviteeamnet
+    ports:
+    - 7652:9052
+    image: camara/sim-swap:r2.1
+
+  
+  qualityondemand:
+    container_name: qualityondemand
+    hostname: camara.qualityondemand
+    networks:
+    - kong-net
+    - graviteeamnet
+    ports:
+    - 7649:9091
+    image: camara/qualityondemand:r1.3

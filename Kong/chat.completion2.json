@@ -1,0 +1,8 @@
+{
+    "messages": [
+        {
+            "role": "user",
+            "content": " genertae java code to call api rest using java 21 version"
+        }
+    ]
+}
