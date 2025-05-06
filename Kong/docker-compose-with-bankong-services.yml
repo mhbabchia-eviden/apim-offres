@@ -63,6 +63,7 @@ services:
       <<: *kong-env
       KONG_ADMIN_ACCESS_LOG: /dev/stdout
       KONG_ADMIN_ERROR_LOG: /dev/stderr
+      KONG_LOG_LEVEL: "debug"
       KONG_PROXY_LISTEN: "${KONG_PROXY_LISTEN:-0.0.0.0:8000}"
       KONG_ADMIN_LISTEN: "${KONG_ADMIN_LISTEN:-0.0.0.0:8001}"
       KONG_ADMIN_GUI_LISTEN: "${KONG_ADMIN_GUI_LISTEN:-0.0.0.0:8002}"
@@ -196,22 +197,7 @@ services:
     - 7654:80
     image: kennethreitz/httpbin:latest
 
-  prometheus:
-    networks:
-    - kong-net
-    image: prom/prometheus:v2.34.0
-    container_name: prometheus
-    hostname: prometheus
-    command: --config.file=/etc/prometheus/prometheus.yaml --log.level=debug
-    healthcheck:
-      test: ["CMD", "wget", "-S", "--spider", "http://prometheus:9090"]
-      interval: 10s
-      timeout: 15s
-      retries: 10  
-    ports:
-    - 9090:9090
-    volumes:
-    - ./prometheus/prometheus.yaml:/etc/prometheus/prometheus.yaml
+ 
 
       
 secrets:

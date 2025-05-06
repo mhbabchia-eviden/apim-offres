@@ -1,6 +1,6 @@
 
-CORP+a925880@DESKTOP-420EK6A MINGW64 /
-$   curl -X POST \
+
+curl -X POST \
               http://localhost:5678/am/secdomain/oauth/token \
   -u '32462b9d-926e-4bca-862b-9d926ecbca92:|client_secret|' \
   -H 'Content-Type: application/x-www-form-urlencoded' \
@@ -9,8 +9,13 @@ $   curl -X POST \
   "error" : "invalid_client",
   "error_description" : "Client authentication failed due to unknown or invalid client"
 }
-CORP+a925880@DESKTOP-420EK6A MINGW64 /
-$ curl -X POST \
+
+
+
+
+
+
+curl -X POST \
               http://localhost:5678/am/secdomain/oauth/token \
   -u '32462b9d-926e-4bca-862b-9d926ecbca92:H1hVPDdHdrqoSAl6wcykqI7JuJvFXCcg1YIby4p5peQ' \
   -H 'Content-Type: application/x-www-form-urlencoded' \
@@ -19,7 +24,11 @@ $ curl -X POST \
   "error" : "invalid_grant",
   "error_description" : "The authorization code 0J0_fjtWok66i67F1vruYTKcIlN8oaaCnpVYQNik0do is invalid."
 }
-CORP+a925880@DESKTOP-420EK6A MINGW64 /
+
+
+
+
+
 $ curl -X POST \
               http://localhost:5678/am/secdomain/oauth/token \
   -u '32462b9d-926e-4bca-862b-9d926ecbca92:H1hVPDdHdrqoSAl6wcykqI7JuJvFXCcg1YIby4p5peQ' \
@@ -30,7 +39,11 @@ $ curl -X POST \
   "token_type" : "bearer",
   "expires_in" : 7199
 }
-CORP+a925880@DESKTOP-420EK6A MINGW64 /
+
+
+
+
+
 $ curl -X POST \
               http://localhost:5678/am/secdomain/oauth/token \
   -u '32462b9d-926e-4bca-862b-9d926ecbca92:H1hVPDdHdrqoSAl6wcykqI7JuJvFXCcg1YIby4p5peQ' \
@@ -41,8 +54,8 @@ $ curl -X POST \
   "token_type" : "bearer",
   "expires_in" : 7199
 }
-CORP+a925880@DESKTOP-420EK6A MINGW64 /
-$
+
+
 
 
 curl -X 'POST' \

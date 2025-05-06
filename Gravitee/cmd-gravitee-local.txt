@@ -1,0 +1,132 @@
+clientSecret
+
+
+// client_secret=clientSecret
+
+curl -X POST \
+              http://localhost:5678/am/secdomain/oauth/token \
+  -H 'Content-Type: application/x-www-form-urlencoded' \
+              -u 'clientId:clientSecret' \
+  -d 'grant_type=client_credentials'
+  
+  
+  
+  curl -X POST \
+              http://localhost:5678/am/secdomain/oauth/token \
+  -H 'Content-Type: application/x-www-form-urlencoded' \
+  -d 'grant_type=client_credentials&client_id=clientId&client_secret=clientSecret'
+  
+  
+  
+  
+  // aad49716-5e09-4e15-8090-d8e9b0ce634f:5fb3fe0f-1b56-49a8-8fcd-371bb284bd05
+  
+  
+  curl -X POST               http://localhost:5678/am/secdomain/oauth/token   -H 'Content-Type: application/x-www-form-urlencoded'               -u 'aad49716-5e09-4e15-8090-d8e9b0ce634f:5fb3fe0f-1b56-49a8-8fcd-371bb284bd05'   -d 'grant_type=client_credentials'
+
+  
+  
+  
+  user: mbh-arboIT
+  pass: HechmiP@ris2023
+  
+  
+  
+  
+  //  6d745312-4149-438f-8e59-5e71606312bd:05d2a290-172e-4768-ba46-6a0f4e9ba4f4
+  
+  
+  
+  
+  
+  
+  
+  // :jJsu-ikEep6m2ToyhwjFL-Ed1edbFsJmPvJZiPky9fQ
+  
+  curl -X POST \
+              http://localhost:5678/am/secdomain/oauth/token \
+  -H 'Content-Type: application/x-www-form-urlencoded' \
+              -u '7cccd440-08e9-42a5-8cd4-4008e952a521:jJsu-ikEep6m2ToyhwjFL-Ed1edbFsJmPvJZiPky9fQ' \
+  -d 'grant_type=client_credentials'
+  
+  
+  
+  
+  
+  
+  
+  
+  //Apim App
+  
+  
+  3b7c651a-666c-4eab-bc65-1a666c9eabf2:K_omMBcYb1eAVHGOXEoUwyh8DxFToDo9CxEjTDA9PDQ
+  
+  
+  
+  curl -X GET \
+              http://localhost:5678/am/secdomain/oidc/userinfo \
+  -H 'Authorization: Bearer access_token'
+  
+  
+ ##################################################################################################################### 
+  
+  
+  SRviFCBt_ASoBipMKFghul-40ygFdDx7DZLJtxW_G8o
+  
+  
+  
+  username : mhbabchia
+  password : S@njoubS@njoub2025
+  
+  
+  
+  
+  http://localhost:5678/am/secdomain/oauth/authorize?client_id=d70ec14d-48c0-40e3-8ec1-4d48c060e37c&response_type=code&redirect_uri=https%3A%2F%2Fwww.httpbin.org%2Fanything
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+   ##################################################################################################################### 
+  
+  
+  client ID (OAuth 2.0) : aacb1c48-67b8-4571-8b1c-4867b8a571f1
+  
+  3UGHwH2lntJ7f5qg66YSVL8wUBtBKqWu5o6bJEJjcZQ
+  
+  
+  
+  http://localhost:5678/am/secdomain/login?client_id=aacb1c48-67b8-4571-8b1c-4867b8a571f1&response_type=code&redirect_uri=https%3A%2F%2Fwww.httpbin.org%2Fanything
+  
+  http://localhost:5678/am/secdomain/oauth/authorize?client_id=aacb1c48-67b8-4571-8b1c-4867b8a571f1&response_type=code&redirect_uri=https%3A%2F%2Fwww.httpbin.org%2Fanything
+  
+  
+  
+  curl -X POST \
+              http://localhost:5678/am/secdomain/oauth/token \
+  -u 'aacb1c48-67b8-4571-8b1c-4867b8a571f1:3UGHwH2lntJ7f5qg66YSVL8wUBtBKqWu5o6bJEJjcZQ' \
+  -H 'Content-Type: application/x-www-form-urlencoded' \
+  -d 'grant_type=authorization_code&code=yChUnKfKF5Qyp5oNKi4shJFYJGdP4LceIOFO6bU4aFs&redirect_uri=https://www.httpbin.org/anything&client_id=aacb1c48-67b8-4571-8b1c-4867b8a571f1'
+  
+  
+  
+  
+  curl -X GET \
+              http://localhost:5678/am/secdomain/oidc/userinfo \
+  -H 'Authorization: Bearer eyJraWQiOiJkZWZhdWx0IiwidHlwIjoiSldUIiwiYWxnIjoiUlMyNTYifQ.eyJnaXMiOiJkZWZhdWx0LWlkcC1lODAzMTliZi0wODg1LTQyNDUtODMxOS1iZjA4ODUwMjQ1Yjk6ZTJmZTgxMzItYWFlYi00ODAyLWJlODEtMzJhYWViNjgwMjQ1Iiwic3ViIjoiMDdlY2IyMGItYTQzZC0zNjhkLWIyODMtNGNmODM4Yjk1MzAwIiwiYXVkIjoiYWFjYjFjNDgtNjdiOC00NTcxLThiMWMtNDg2N2I4YTU3MWYxIiwiZG9tYWluIjoiZTgwMzE5YmYtMDg4NS00MjQ1LTgzMTktYmYwODg1MDI0NWI5IiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo1Njc4L2FtL3NlY2RvbWFpbi9vaWRjIiwiZXhwIjoxNzM2NTMzMTk0LCJpYXQiOjE3MzY1MTg3OTQsImp0aSI6IlhjOXoycWFBU3hxekV2eUlIT1N1R3I0dTA3ZDlfUExkT3o2dlR4cVNnV1UifQ.giv0da70dEBji81HhbUaFgzgdc5CMIXm7jYJrylGhUBDuv7MpjTDoByNnR2rOHM3YMbXDopER4gLiwc0HqB4zmB1PmXsq9bJIhHRA8LfD8Ylluf_oH3gAgjVxYoGRYCfJS46uf6AqSm6kmDVoNUGHv6CmIj8_h2pI0iW5B4sCXsccbFDCagOdVBsnwChErq1MKCOYXbeJb5mq70RvS740w7uDp5UGpRqdwh6RoqPgU22CtRUv28vPVFd2fKl9tlcJRUkzArre_apR34PWamixSTcUc-ToPajFTSDCTjnkef6JPBjfqc9EmxpYYkjYLtG4xiFacSiFZbKPjKL200ARA'
+  
+  
+  
+  
+  
+  
+  curl -X POST \
+              http://localhost:5678/am/secdomain/oauth/token \
+  -u '32462b9d-926e-4bca-862b-9d926ecbca92:H1hVPDdHdrqoSAl6wcykqI7JuJvFXCcg1YIby4p5peQ' \
+  -H 'Content-Type: application/x-www-form-urlencoded' \
+  -d 'grant_type=authorization_code&code=wrJX8V0t6IOxqnNlEk1M00HU0T9GfpDYBDFSeL9y8cQ&redirect_uri=http://localhost:7654/anything&client_id=32462b9d-926e-4bca-862b-9d926ecbca92'
